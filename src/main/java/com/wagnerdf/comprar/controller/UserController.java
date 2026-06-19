@@ -20,24 +20,12 @@ public class UserController {
 	// REGISTER
 	// ================
 	@PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+	public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
 
-        User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .birthDate(request.getBirthDate())
-                .gender(request.getGender())
-                .build();
+	    userService.createUser(request);
 
-        userService.createUser(
-                user,
-                request.getUsername(),
-                request.getPassword()
-        );
-
-        return ResponseEntity.ok("Usuário criado com sucesso!");
-    }
-
+	    return ResponseEntity.status(201).build();
+	}
     // =========================
     // LOGIN
     // =========================
