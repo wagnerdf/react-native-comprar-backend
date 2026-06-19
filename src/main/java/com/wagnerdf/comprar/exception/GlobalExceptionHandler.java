@@ -1,0 +1,68 @@
+package com.wagnerdf.comprar.exception;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<ApiError> handleAuthException(
+	        AuthenticationException ex,
+	        HttpServletRequest request
+    ) {
+
+		ApiError error = ApiError.builder()
+	            .timestamp(LocalDateTime.now())
+	            .status(HttpStatus.UNAUTHORIZED.value())
+	            .error("Unauthorized")
+	            .message(ex.getMessage())
+	            .path(request.getRequestURI())
+	            .build();
+
+	    return ResponseEntity
+	            .status(HttpStatus.UNAUTHORIZED)
+	            .body(error);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> handleGenericException(
+            Exception ex,
+            HttpServletRequest request
+    ) {
+
+        ApiError error = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Internal Server Error")
+                .message("Erro interno no servidor")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(error);
+    }
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiError> handleBusinessException(
+            BusinessException ex,
+            HttpServletRequest request
+    ) {
+
+        ApiError error = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad Request")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
+}

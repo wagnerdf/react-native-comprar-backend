@@ -3,6 +3,8 @@ package com.wagnerdf.comprar.service;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.entity.Auth;
 import com.wagnerdf.comprar.entity.User;
+import com.wagnerdf.comprar.exception.AuthenticationException;
+import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.mapper.UserMapper;
 import com.wagnerdf.comprar.repository.AuthRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
@@ -24,11 +26,11 @@ public class UserService {
         // VALIDAÇÕES
         // =========================
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email já cadastrado");
+        	throw new BusinessException("Email já cadastrado");
         }
 
         if (authRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new RuntimeException("Username já cadastrado");
+        	throw new BusinessException("Username já cadastrado");
         }
 
         // =========================
@@ -56,10 +58,13 @@ public class UserService {
         authRepository.save(auth);
     }
 
-    public boolean login(String username, String password) {
+    public void login(String username, String password) {
 
-        return authRepository.findByUsername(username)
-                .map(auth -> auth.getPassword().equals(password))
-                .orElse(false);
+        var auth = authRepository.findByUsername(username)
+                .orElseThrow(() -> new AuthenticationException("Usuário ou senha inválidos"));
+
+        if (!auth.getPassword().equals(password)) {
+            throw new AuthenticationException("Usuário ou senha inválidos");
+        }
     }
 }

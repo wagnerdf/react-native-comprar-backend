@@ -1,7 +1,6 @@
 package com.wagnerdf.comprar.controller;
 
 
-import com.wagnerdf.comprar.entity.User;
 import com.wagnerdf.comprar.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,18 +28,14 @@ public class UserController {
     // =========================
     // LOGIN
     // =========================
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+	@PostMapping("/login")
+	public ResponseEntity<Void> login(@RequestBody LoginRequest request) {
 
-        boolean isValid = userService.login(
-                request.getUsername(),
-                request.getPassword()
-        );
+	    userService.login(
+	            request.getUsername(),
+	            request.getPassword()
+	    );
 
-        if (isValid) {
-            return ResponseEntity.ok("Login realizado com sucesso!");
-        } else {
-            return ResponseEntity.status(401).body("Usuário ou senha inválidos");
-        }
-    }
+	    return ResponseEntity.ok().build();
+	}
 }
