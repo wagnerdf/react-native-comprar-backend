@@ -50,6 +50,13 @@ public class UserService {
         authRepository.save(auth);
 		
 	}
+	
+	public boolean login(String username, String password) {
+
+	    return authRepository.findByUsername(username)
+	            .map(auth -> auth.getPassword().equals(password))
+	            .orElse(false);
+	}
 }
 
 
