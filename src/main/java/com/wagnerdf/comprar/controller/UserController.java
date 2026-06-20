@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
+import com.wagnerdf.comprar.dto.response.AuthResponse;
 import com.wagnerdf.comprar.dto.request.LoginRequest;
 
 @RestController
@@ -31,13 +32,13 @@ public class UserController {
     // LOGIN
     // =========================
 	@PostMapping("/login")
-	public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest request) {
+	public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
 
-	    userService.login(
+		String token = userService.login(
 	            request.getUsername(),
 	            request.getPassword()
 	    );
 
-	    return ResponseEntity.ok().build();
+		return ResponseEntity.ok(new AuthResponse(token));
 	}
 }

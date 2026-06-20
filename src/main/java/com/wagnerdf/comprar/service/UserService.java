@@ -8,6 +8,8 @@ import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.mapper.UserMapper;
 import com.wagnerdf.comprar.repository.AuthRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
+import com.wagnerdf.comprar.security.JwtService;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public void createUser(RegisterRequest request) {
 
@@ -61,7 +64,7 @@ public class UserService {
         authRepository.save(auth);
     }
 
-    public void login(String username, String password) {
+    public String login(String username, String password) {
 
         var auth = authRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationException("Usuário ou senha inválidos"));
@@ -71,5 +74,7 @@ public class UserService {
         if (!isValid) {
             throw new AuthenticationException("Usuário ou senha inválidos");
         }
+        
+        return jwtService.generateToken(username);
     }
 }
