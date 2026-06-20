@@ -1,6 +1,8 @@
 package com.wagnerdf.comprar.dto.request;
 
 import com.wagnerdf.comprar.enums.Gender;
+
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -8,11 +10,22 @@ import java.time.LocalDate;
 @Data
 public class RegisterRequest {
 
+	@NotBlank(message = "Nome é obrigatório")
     private String name;
+	
+	@Email(message = "Email inválido")
+	@NotBlank(message = "Email é obrigatório")
     private String email;
+	
+	@NotNull(message = "Data de nacimento é obrigatório")
     private LocalDate birthDate;
+	
+	@NotNull(message = "Sexo é obrigatório")
     private Gender gender;
 
+	@NotBlank(message = "Username é obrigatório")
     private String username;
+	
+	@Size(min = 6, message = "Senha deve ter no mínimo 6 caracteres")
     private String password;
 }
