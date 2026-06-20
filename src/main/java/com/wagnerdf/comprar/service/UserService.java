@@ -9,6 +9,8 @@ import com.wagnerdf.comprar.mapper.UserMapper;
 import com.wagnerdf.comprar.repository.AuthRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +21,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public void createUser(RegisterRequest request) {
 
@@ -52,7 +55,7 @@ public class UserService {
         Auth auth = Auth.builder()
                 .user(savedUser)
                 .username(request.getUsername())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
         authRepository.save(auth);
@@ -62,8 +65,10 @@ public class UserService {
 
         var auth = authRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationException("Usuário ou senha inválidos"));
+        
+        boolean isValid = passwordEncoder.matches(password, auth.getPassword());
 
-        if (!auth.getPassword().equals(password)) {
+        if (!isValid) {
             throw new AuthenticationException("Usuário ou senha inválidos");
         }
     }
