@@ -1,5 +1,7 @@
 package com.wagnerdf.comprar.entity;
 
+import com.wagnerdf.comprar.enums.Role;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,4 +27,7 @@ public class Auth {
 
     @Column(nullable = false)
     private String password;
+    
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

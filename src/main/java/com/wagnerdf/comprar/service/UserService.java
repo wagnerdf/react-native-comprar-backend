@@ -3,6 +3,7 @@ package com.wagnerdf.comprar.service;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.entity.Auth;
 import com.wagnerdf.comprar.entity.User;
+import com.wagnerdf.comprar.enums.Role;
 import com.wagnerdf.comprar.exception.AuthenticationException;
 import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.mapper.UserMapper;
@@ -59,6 +60,7 @@ public class UserService {
                 .user(savedUser)
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
                 .build();
 
         authRepository.save(auth);

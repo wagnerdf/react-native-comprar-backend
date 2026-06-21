@@ -47,4 +47,9 @@ public class UserController {
 	public String me() {
 	    return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
+	
+	@GetMapping("/admin")
+	public String admin() {
+	    return "Apenas ADMIN!";
+	}
 }
