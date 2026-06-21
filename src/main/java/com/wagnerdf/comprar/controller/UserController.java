@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
+import com.wagnerdf.comprar.dto.response.UserResponse;
 import com.wagnerdf.comprar.dto.request.LoginRequest;
 
 @RestController
@@ -47,7 +48,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/me")
-	public Map<String, Object> me() {
+	public UserResponse me() {
 
 	    var auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -59,9 +60,9 @@ public class UserController {
 	            .map(a -> a.getAuthority())
 	            .orElse("UNKNOWN");
 
-	    return Map.of(
-	            "username", username,
-	            "role", role.replace("ROLE_", "")
+	    return new UserResponse(
+	            username,
+	            role.replace("ROLE_", "")
 	    );
 	}
 	
