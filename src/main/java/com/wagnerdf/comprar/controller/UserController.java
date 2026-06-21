@@ -5,6 +5,9 @@ import com.wagnerdf.comprar.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +47,22 @@ public class UserController {
 	}
 	
 	@GetMapping("/me")
-	public String me() {
-	    return SecurityContextHolder.getContext().getAuthentication().getName();
+	public Map<String, Object> me() {
+
+	    var auth = SecurityContextHolder.getContext().getAuthentication();
+
+	    String username = auth.getName();
+
+	    String role = auth.getAuthorities()
+	            .stream()
+	            .findFirst()
+	            .map(a -> a.getAuthority())
+	            .orElse("UNKNOWN");
+
+	    return Map.of(
+	            "username", username,
+	            "role", role.replace("ROLE_", "")
+	    );
 	}
 	
 	@GetMapping("/admin")

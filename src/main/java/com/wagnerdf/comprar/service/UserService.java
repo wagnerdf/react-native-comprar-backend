@@ -77,6 +77,6 @@ public class UserService {
             throw new AuthenticationException("Usuário ou senha inválidos");
         }
         
-        return jwtService.generateToken(username);
+        return jwtService.generateToken(username, auth.getRole().name());
     }
 }
