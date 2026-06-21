@@ -6,6 +6,7 @@ import com.wagnerdf.comprar.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
@@ -40,5 +41,10 @@ public class UserController {
 	    );
 
 		return ResponseEntity.ok(new AuthResponse(token));
+	}
+	
+	@GetMapping("/me")
+	public String me() {
+	    return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 }
