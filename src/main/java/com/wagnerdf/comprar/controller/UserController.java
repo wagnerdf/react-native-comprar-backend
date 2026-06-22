@@ -98,4 +98,14 @@ public class UserController {
 	            new AuthResponse(newAccessToken, refreshToken)
 	    );
 	}
+	
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(@RequestBody Map<String, String> body) {
+
+	    String refreshToken = body.get("refreshToken");
+
+	    userService.logout(refreshToken);
+
+	    return ResponseEntity.ok().build();
+	}
 }

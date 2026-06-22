@@ -95,6 +95,14 @@ public class UserService {
         return new AuthResponse(accessToken, refreshToken);
         
     }
+    
+    public void logout(String refreshToken) {
+
+        var token = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new AuthenticationException("Refresh token inválido"));
+
+        refreshTokenRepository.delete(token);
+    }
 }
 
 
