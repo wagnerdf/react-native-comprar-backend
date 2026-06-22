@@ -14,6 +14,7 @@ import com.wagnerdf.comprar.repository.RefreshTokenRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
 import com.wagnerdf.comprar.security.JwtService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,6 +71,7 @@ public class UserService {
         authRepository.save(auth);
     }
 
+    @Transactional
     public AuthResponse login(String username, String password) {
 
         var auth = authRepository.findByUsername(username)
@@ -82,7 +84,7 @@ public class UserService {
         String accessToken = jwtService.generateToken(username, auth.getRole().name());
         String refreshToken = jwtService.generateRefreshToken(username) ;
         
-        refreshTokenRepository.deleteByUsername(username);
+        refreshTokenRepository.deleteAllByUsername(username);
         
         refreshTokenRepository.save(
         		RefreshToken.builder()
