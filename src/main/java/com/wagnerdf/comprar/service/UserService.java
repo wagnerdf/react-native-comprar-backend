@@ -1,13 +1,16 @@
 package com.wagnerdf.comprar.service;
 
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
+import com.wagnerdf.comprar.dto.response.AuthResponse;
 import com.wagnerdf.comprar.entity.Auth;
+import com.wagnerdf.comprar.entity.RefreshToken;
 import com.wagnerdf.comprar.entity.User;
 import com.wagnerdf.comprar.enums.Role;
 import com.wagnerdf.comprar.exception.AuthenticationException;
 import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.mapper.UserMapper;
 import com.wagnerdf.comprar.repository.AuthRepository;
+import com.wagnerdf.comprar.repository.RefreshTokenRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
 import com.wagnerdf.comprar.security.JwtService;
 
@@ -25,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
 
     public void createUser(RegisterRequest request) {
@@ -66,17 +70,42 @@ public class UserService {
         authRepository.save(auth);
     }
 
-    public String login(String username, String password) {
+    public AuthResponse login(String username, String password) {
 
         var auth = authRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationException("Usuário ou senha inválidos"));
         
-        boolean isValid = passwordEncoder.matches(password, auth.getPassword());
-
-        if (!isValid) {
-            throw new AuthenticationException("Usuário ou senha inválidos");
+        if(!passwordEncoder.matches(password, auth.getPassword())) {
+        	throw new AuthenticationException("Usuário ou senha inválidos");
         }
         
-        return jwtService.generateToken(username, auth.getRole().name());
+        String accessToken = jwtService.generateToken(username, auth.getRole().name());
+        String refreshToken = jwtService.generateRefreshToken(username) ;
+        
+        refreshTokenRepository.deleteByUsername(username);
+        
+        refreshTokenRepository.save(
+        		RefreshToken.builder()
+        			.token(refreshToken)
+        			.username(username)
+        			.expiration(LocalDateTime.now().plusDays(7))
+        			.build()
+        );
+        
+        return new AuthResponse(accessToken, refreshToken);
+        
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
