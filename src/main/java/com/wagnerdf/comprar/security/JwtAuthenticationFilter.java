@@ -12,8 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.wagnerdf.comprar.enums.Role;
+
 import java.io.IOException;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -40,12 +43,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String username = jwtService.extractUsername(token);
             String role = jwtService.extractRole(token);
+            
+            Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+
+            // ROLE
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+
+            // PERMISSIONS
+            Role roleEnum = Role.valueOf(role);
+
+            roleEnum.getPermissions().forEach(permission ->
+                    authorities.add(new SimpleGrantedAuthority(permission.name()))
+            );
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             username,
                             null,
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
+                            authorities
                     );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
