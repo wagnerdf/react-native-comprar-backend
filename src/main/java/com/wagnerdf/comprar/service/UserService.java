@@ -30,6 +30,7 @@ public class UserService {
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AuditService auditService;
     private final JwtService jwtService;
 
     public void createUser(RegisterRequest request) {
@@ -94,6 +95,7 @@ public class UserService {
         			.build()
         );
         
+        auditService.log(username, "LOGIN");
         return new AuthResponse(accessToken, refreshToken);
         
     }
@@ -104,6 +106,7 @@ public class UserService {
                 .orElseThrow(() -> new AuthenticationException("Refresh token inválido"));
 
         refreshTokenRepository.delete(token);
+        auditService.log(token.getUsername(), "LOGOUT");
     }
 }
 
