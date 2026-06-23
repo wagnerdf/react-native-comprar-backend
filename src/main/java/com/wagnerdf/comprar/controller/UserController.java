@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
@@ -52,8 +53,8 @@ public class UserController {
 
 		return ResponseEntity.ok(response);
 	}
-	
 	@GetMapping("/me")
+	@PreAuthorize("isAuthenticated()")
 	public UserResponse me() {
 
 	    var auth = SecurityContextHolder.getContext().getAuthentication();
@@ -62,9 +63,11 @@ public class UserController {
 
 	    String role = auth.getAuthorities()
 	            .stream()
-	            .findFirst()
 	            .map(a -> a.getAuthority())
-	            .orElse("UNKNOWN");
+	            .filter(a -> a.startsWith("ROLE_"))
+	            .findFirst()
+	            .orElse("ROLE_UNKNOWN")
+	            .replace("ROLE_", "");
 
 	    return new UserResponse(
 	            username,
@@ -73,6 +76,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/admin")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String admin() {
 	    return "Apenas ADMIN!";
 	}
