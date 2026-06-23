@@ -10,9 +10,11 @@ import com.wagnerdf.comprar.exception.AuthenticationException;
 import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.mapper.UserMapper;
 import com.wagnerdf.comprar.repository.AuthRepository;
+import com.wagnerdf.comprar.repository.PermissionRepository;
 import com.wagnerdf.comprar.repository.RefreshTokenRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
 import com.wagnerdf.comprar.security.JwtService;
+import com.wagnerdf.comprar.entity.Permission;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +33,11 @@ public class UserService {
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final PermissionRepository permissionRepository;
     private final AuditService auditService;
     private final JwtService jwtService;
 
+    @Transactional
     public void createUser(RegisterRequest request) {
 
         // =========================
@@ -60,13 +65,25 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         // =========================
+        // PERMISSÕES PADRÃO
+        // =========================
+        Permission readProfile = permissionRepository.findByName("READ_PROFILE")
+                .orElseThrow(() -> new RuntimeException("Permissão READ_PROFILE não encontrada"));
+
+        // =========================
+        // ROLE PADRÃO
+        // =========================
+        Role role = Role.USER;
+
+        // =========================
         // AUTH
         // =========================
         Auth auth = Auth.builder()
                 .user(savedUser)
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(role)
+                .permissions(Set.of(readProfile))
                 .build();
 
         authRepository.save(auth);
