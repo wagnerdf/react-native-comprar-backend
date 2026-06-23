@@ -1,5 +1,7 @@
 package com.wagnerdf.comprar.entity;
 
+import java.util.Set;
+
 import com.wagnerdf.comprar.enums.Role;
 
 import jakarta.persistence.*;
@@ -30,4 +32,12 @@ public class Auth {
     
     @Enumerated(EnumType.STRING)
     private Role role;
+    
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "auth_permissions",
+            joinColumns = @JoinColumn(name = "auth_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private Set<Permission> permissions;
 }

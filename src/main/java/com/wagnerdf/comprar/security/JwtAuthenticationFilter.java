@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.wagnerdf.comprar.enums.Role;
+import com.wagnerdf.comprar.repository.AuthRepository;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import java.util.Set;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final AuthRepository authRepository;
 
     @Override
     protected void doFilterInternal(
@@ -44,16 +46,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = jwtService.extractUsername(token);
             String role = jwtService.extractRole(token);
             
+            // buscar do banco (via service ou cache simples)
+            var auth = authRepository.findByUsername(username)
+                    .orElseThrow();
+            
             Set<SimpleGrantedAuthority> authorities = new HashSet<>();
 
             // ROLE
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
 
-            // PERMISSIONS
-            Role roleEnum = Role.valueOf(role);
-
-            roleEnum.getPermissions().forEach(permission ->
-                    authorities.add(new SimpleGrantedAuthority(permission.name()))
+            // PERMISSIONS (dinâmicas)
+            auth.getPermissions().forEach(p ->
+                    authorities.add(new SimpleGrantedAuthority(p.getName()))
             );
 
             UsernamePasswordAuthenticationToken authentication =
