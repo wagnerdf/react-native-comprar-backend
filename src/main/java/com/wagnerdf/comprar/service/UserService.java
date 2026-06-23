@@ -2,6 +2,7 @@ package com.wagnerdf.comprar.service;
 
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
+import com.wagnerdf.comprar.dto.response.UserListResponse;
 import com.wagnerdf.comprar.entity.Auth;
 import com.wagnerdf.comprar.entity.RefreshToken;
 import com.wagnerdf.comprar.entity.User;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -124,6 +126,19 @@ public class UserService {
 
         refreshTokenRepository.delete(token);
         auditService.log(token.getUsername(), "LOGOUT");
+    }
+    
+    public List<UserListResponse> getAllUsers() {
+
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UserListResponse(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getGender()
+                ))
+                .toList();
     }
 }
 

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
+import com.wagnerdf.comprar.dto.response.UserListResponse;
 import com.wagnerdf.comprar.dto.response.UserResponse;
 import com.wagnerdf.comprar.exception.AuthenticationException;
 import com.wagnerdf.comprar.repository.RefreshTokenRepository;
@@ -111,5 +113,12 @@ public class UserController {
 	    userService.logout(refreshToken);
 
 	    return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping
+	@PreAuthorize("hasAuthority('READ_USER')")
+	public ResponseEntity<List<UserListResponse>> getAllUsers() {
+
+	    return ResponseEntity.ok(userService.getAllUsers());
 	}
 }
