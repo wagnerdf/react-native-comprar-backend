@@ -7,7 +7,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import com.wagnerdf.comprar.enums.Gender;
+
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -94,17 +98,25 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
     
+    public static String getEnumValues(Class<? extends Enum<?>> enumClass) {
+        return Arrays.stream(enumClass.getEnumConstants())
+                .map(Enum::name)
+                .collect(Collectors.joining(", "));
+    }
+    
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiError> handleInvalidEnum(
             HttpMessageNotReadableException ex,
             HttpServletRequest request
     ) {
 
+    	String validValues = getEnumValues(Gender.class);
+    	
         ApiError error = ApiError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Invalid Request")
-                .message("Gender inválido. Valores aceitos: MALE, FEMALE, OTHER")
+                .message("Gender inválido. Valores aceitos: " + validValues)
                 .path(request.getRequestURI())
                 .build();
 
