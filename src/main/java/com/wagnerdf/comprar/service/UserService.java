@@ -20,6 +20,10 @@ import com.wagnerdf.comprar.entity.Permission;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -128,17 +132,17 @@ public class UserService {
         auditService.log(token.getUsername(), "LOGOUT");
     }
     
-    public List<UserListResponse> getAllUsers() {
+    public Page<UserListResponse> getAllUsers(int page, int size) {
+    	
+    	Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
 
-        return userRepository.findAll()
-                .stream()
+        return userRepository.findAll(pageable)
                 .map(user -> new UserListResponse(
                         user.getId(),
                         user.getName(),
                         user.getEmail(),
                         user.getGender()
-                ))
-                .toList();
+                ));
     }
 }
 

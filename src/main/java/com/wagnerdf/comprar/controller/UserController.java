@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -117,8 +118,23 @@ public class UserController {
 	
 	@GetMapping
 	@PreAuthorize("hasAuthority('READ_USER')")
-	public ResponseEntity<List<UserListResponse>> getAllUsers() {
+	public ResponseEntity<Page<UserListResponse>> getAllUsers(
+			
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size
+			
+		) {
 
-	    return ResponseEntity.ok(userService.getAllUsers());
+	    return ResponseEntity.ok(userService.getAllUsers(page, size));
 	}
 }
+
+
+
+
+
+
+
+
+
+
