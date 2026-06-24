@@ -116,16 +116,47 @@ public class UserController {
 	    return ResponseEntity.ok().build();
 	}
 	
+	/**
+	 * 🔍 Lista usuários com paginação e filtros opcionais
+	 *
+	 * 📌 Endpoint:
+	 * GET /users
+	 *
+	 * 📌 Exemplos de uso:
+	 *
+	 * ✔ Listar usuários (padrão)
+	 * GET /users
+	 *
+	 * ✔ Paginação
+	 * GET /users?page=0&size=5
+	 *
+	 * ✔ Buscar por nome
+	 * GET /users?name=wagner
+	 *
+	 * ✔ Buscar por email
+	 * GET /users?email=@gmail
+	 *
+	 * ✔ Combinar filtros + paginação
+	 * GET /users?page=0&size=5&name=wag&email=@email
+	 *
+	 * 🔐 Segurança:
+	 * - Requer permissão: READ_USER
+	 *
+	 * 📌 Retorno:
+	 * - Lista paginada de usuários (Page<UserListResponse>)
+	 */
 	@GetMapping
 	@PreAuthorize("hasAuthority('READ_USER')")
 	public ResponseEntity<Page<UserListResponse>> getAllUsers(
 			
 			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(required = false) String name,
+	        @RequestParam(required = false) String email
 			
 		) {
 
-	    return ResponseEntity.ok(userService.getAllUsers(page, size));
+	    return ResponseEntity.ok(userService.getAllUsers(page, size, name, email));
 	}
 }
 
