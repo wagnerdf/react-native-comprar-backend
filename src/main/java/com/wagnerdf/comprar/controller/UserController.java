@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -17,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
+import com.wagnerdf.comprar.dto.response.UserDetailResponse;
 import com.wagnerdf.comprar.dto.response.UserListResponse;
 import com.wagnerdf.comprar.dto.response.UserResponse;
 import com.wagnerdf.comprar.exception.AuthenticationException;
@@ -157,6 +157,29 @@ public class UserController {
 		) {
 
 	    return ResponseEntity.ok(userService.getAllUsers(page, size, name, email));
+	}
+	
+	/**
+	 * 🔍 Busca usuário por ID
+	 *
+	 * 📌 Endpoint:
+	 * GET /users/{id}
+	 *
+	 * 📌 Exemplo:
+	 * GET /users/123
+	 *
+	 * 🔐 Segurança:
+	 * - Requer permissão: READ_USER
+	 *
+	 * 📌 Retorno:
+	 * - Dados detalhados do usuário
+	 */
+	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('READ_USER')")
+	public ResponseEntity<UserDetailResponse> getUserById(
+	        @PathVariable String id
+	) {
+	    return ResponseEntity.ok(userService.getUserById(id));
 	}
 }
 

@@ -2,6 +2,7 @@ package com.wagnerdf.comprar.service;
 
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
+import com.wagnerdf.comprar.dto.response.UserDetailResponse;
 import com.wagnerdf.comprar.dto.response.UserListResponse;
 import com.wagnerdf.comprar.entity.Auth;
 import com.wagnerdf.comprar.entity.RefreshToken;
@@ -30,7 +31,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -149,6 +149,19 @@ public class UserService {
                         user.getEmail(),
                         user.getGender()
                 ));
+    }
+    
+    public UserDetailResponse getUserById(String id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+
+        return new UserDetailResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getGender()
+        );
     }
 }
 
