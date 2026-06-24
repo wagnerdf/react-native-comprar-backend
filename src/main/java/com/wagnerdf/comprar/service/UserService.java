@@ -10,6 +10,7 @@ import com.wagnerdf.comprar.entity.User;
 import com.wagnerdf.comprar.enums.Role;
 import com.wagnerdf.comprar.exception.AuthenticationException;
 import com.wagnerdf.comprar.exception.BusinessException;
+import com.wagnerdf.comprar.exception.UserNotFoundException;
 import com.wagnerdf.comprar.mapper.UserMapper;
 import com.wagnerdf.comprar.repository.AuthRepository;
 import com.wagnerdf.comprar.repository.PermissionRepository;
@@ -154,7 +155,7 @@ public class UserService {
     public UserDetailResponse getUserById(String id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+        		.orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
         return new UserDetailResponse(
                 user.getId(),
