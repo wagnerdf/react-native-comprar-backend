@@ -16,4 +16,9 @@ public class UserSpecification {
                 email == null ? null :
                 cb.like(cb.lower(root.get("email")), "%" + email.toLowerCase() + "%");
     }
+    
+    public static Specification<User> isActive() {
+        return (root, query, cb) ->
+                cb.isTrue(root.get("active"));
+    }
 }

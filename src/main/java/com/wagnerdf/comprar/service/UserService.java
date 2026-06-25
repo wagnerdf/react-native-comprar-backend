@@ -148,7 +148,8 @@ public class UserService {
     	Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
     	
     	Specification<User> spec = Specification
-                .where(UserSpecification.nameContains(name))
+    			.where(UserSpecification.isActive())
+                .and(UserSpecification.nameContains(name))
                 .and(UserSpecification.emailContains(email));
 
         return userRepository.findAll(spec, pageable)
