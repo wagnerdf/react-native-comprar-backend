@@ -217,6 +217,33 @@ public class UserController {
 
 	    return ResponseEntity.ok().build();
 	}
+	
+	/**
+	 * 🗑️ Desativa um usuário (Soft Delete)
+	 *
+	 * Regras:
+	 * - ADMIN pode desativar qualquer usuário
+	 * - USER pode desativar apenas a própria conta
+	 *
+	 * O usuário não é removido do banco.
+	 * Apenas recebe:
+	 *
+	 * active = false
+	 *
+	 * Permissão:
+	 * DELETE_USER
+	 */
+	@DeleteMapping("/{id}")
+	@PreAuthorize("hasAuthority('DELETE_USER')")
+	@Auditable(action = "DELETE_USER")
+	public ResponseEntity<Void> deleteUser(
+	        @PathVariable String id
+	) {
+
+	    userService.deleteUser(id);
+
+	    return ResponseEntity.noContent().build();
+	}
 }
 
 

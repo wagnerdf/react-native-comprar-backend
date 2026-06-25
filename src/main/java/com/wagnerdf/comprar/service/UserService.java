@@ -210,6 +210,40 @@ public class UserService {
 
         userRepository.save(user);
     }
+    
+    public void deleteUser(String id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new UserNotFoundException("Usuário não encontrado"));
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String loggedUsername = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+
+            Auth auth = authRepository.findByUsername(loggedUsername)
+                    .orElseThrow(() ->
+                            new AuthenticationException("Usuário não autenticado"));
+
+            if (!auth.getUser().getId().equals(id)) {
+                throw new AuthenticationException(
+                        "Você não pode excluir outro usuário"
+                );
+            }
+        }
+
+        user.setActive(false);
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+    }
 }
 
 
