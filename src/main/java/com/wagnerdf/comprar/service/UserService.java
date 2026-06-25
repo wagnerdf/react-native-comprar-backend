@@ -73,6 +73,11 @@ public class UserService {
         // =========================
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
+        
+        // =========================
+        // ACTIVE USER
+        // =========================
+        user.setActive(true);
 
         User savedUser = userRepository.save(user);
 

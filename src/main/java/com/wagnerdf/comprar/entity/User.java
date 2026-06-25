@@ -33,4 +33,7 @@ public class User {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+    
+    @Column(nullable = false)
+    private Boolean active;
 }
