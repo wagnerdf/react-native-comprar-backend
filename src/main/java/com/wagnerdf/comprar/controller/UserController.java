@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
+import com.wagnerdf.comprar.dto.request.UpdateUserRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
 import com.wagnerdf.comprar.dto.response.UserDetailResponse;
 import com.wagnerdf.comprar.dto.response.UserListResponse;
@@ -22,6 +23,7 @@ import com.wagnerdf.comprar.dto.response.UserResponse;
 import com.wagnerdf.comprar.exception.AuthenticationException;
 import com.wagnerdf.comprar.repository.RefreshTokenRepository;
 import com.wagnerdf.comprar.security.JwtService;
+import com.wagnerdf.comprar.annotation.Auditable;
 import com.wagnerdf.comprar.dto.request.LoginRequest;
 
 @RestController
@@ -180,6 +182,40 @@ public class UserController {
 	        @PathVariable String id
 	) {
 	    return ResponseEntity.ok(userService.getUserById(id));
+	}
+	
+	/**
+	 * ✏️ Atualiza dados do usuário
+	 *
+	 * Regras:
+	 * - ADMIN pode alterar qualquer usuário
+	 * - USER pode alterar apenas o próprio cadastro
+	 *
+	 * Campos permitidos:
+	 * - name
+	 * - birthDate
+	 * - gender
+	 *
+	 * Campos bloqueados:
+	 * - email
+	 *
+	 * Exemplo:
+	 * PUT /users/{id}
+	 *
+	 * Permissão:
+	 * UPDATE_USER
+	 */
+	@PutMapping("/{id}")
+	@PreAuthorize("hasAuthority('UPDATE_USER')")
+	@Auditable(action = "UPDATE_USER")
+	public ResponseEntity<Void> updateUser(
+	        @PathVariable String id,
+	        @Valid @RequestBody UpdateUserRequest request
+	) {
+
+	    userService.updateUser(id, request);
+
+	    return ResponseEntity.ok().build();
 	}
 }
 

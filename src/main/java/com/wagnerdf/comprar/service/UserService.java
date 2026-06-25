@@ -19,6 +19,7 @@ import com.wagnerdf.comprar.repository.UserRepository;
 import com.wagnerdf.comprar.security.JwtService;
 import com.wagnerdf.comprar.specification.UserSpecification;
 import com.wagnerdf.comprar.entity.Permission;
+import com.wagnerdf.comprar.dto.request.UpdateUserRequest;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -163,6 +166,43 @@ public class UserService {
                 user.getEmail(),
                 user.getGender()
         );
+    }
+    
+    public void updateUser(String id, UpdateUserRequest request) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new UserNotFoundException("Usuário não encontrado"));
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String loggedUsername = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+
+            Auth auth = authRepository.findByUsername(loggedUsername)
+                    .orElseThrow(() ->
+                            new AuthenticationException("Usuário não autenticado"));
+
+            if (!auth.getUser().getId().equals(id)) {
+                throw new AuthenticationException(
+                        "Você não pode alterar outro usuário"
+                );
+            }
+        }
+
+        user.setName(request.getName());
+        user.setBirthDate(request.getBirthDate());
+        user.setGender(request.getGender());
+
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
     }
 }
 
