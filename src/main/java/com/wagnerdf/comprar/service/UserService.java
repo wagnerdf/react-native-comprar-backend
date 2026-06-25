@@ -163,7 +163,7 @@ public class UserService {
     
     public UserDetailResponse getUserById(String id) {
 
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdAndActiveTrue(id)
         		.orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
         return new UserDetailResponse(
@@ -176,7 +176,7 @@ public class UserService {
     
     public void updateUser(String id, UpdateUserRequest request) {
 
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() ->
                         new UserNotFoundException("Usuário não encontrado"));
 
@@ -213,7 +213,7 @@ public class UserService {
     
     public void deleteUser(String id) {
 
-        User user = userRepository.findById(id)
+    	User user = userRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() ->
                         new UserNotFoundException("Usuário não encontrado"));
 
