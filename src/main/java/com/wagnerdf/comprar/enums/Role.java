@@ -5,12 +5,15 @@ import java.util.Set;
 public enum Role {
 
     USER(Set.of(
-            Permission.READ_PROFILE
+    		Permission.READ_PROFILE,
+            Permission.UPDATE_USER,
+            Permission.DELETE_USER
     )),
 
     ADMIN(Set.of(
-            Permission.READ_PROFILE,
+    		Permission.READ_PROFILE,
             Permission.CREATE_USER,
+            Permission.UPDATE_USER,
             Permission.DELETE_USER
     ));
 
