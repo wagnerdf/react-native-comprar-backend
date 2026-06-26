@@ -36,6 +36,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -84,8 +85,15 @@ public class UserService {
         // =========================
         // PERMISSÕES PADRÃO
         // =========================
-        Permission readProfile = permissionRepository.findByName("READ_PROFILE")
-                .orElseThrow(() -> new RuntimeException("Permissão READ_PROFILE não encontrada"));
+        Set<Permission> permissions = Role.USER.getPermissions()
+                .stream()
+                .map(permissionEnum ->
+                        permissionRepository.findByName(permissionEnum.name())
+                                .orElseThrow(() ->
+                                        new RuntimeException(
+                                                "Permissão não encontrada: " + permissionEnum.name()
+                                        )))
+                .collect(Collectors.toSet());
 
         // =========================
         // ROLE PADRÃO
@@ -100,7 +108,7 @@ public class UserService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(role)
-                .permissions(Set.of(readProfile))
+                .permissions(permissions)
                 .build();
 
         authRepository.save(auth);

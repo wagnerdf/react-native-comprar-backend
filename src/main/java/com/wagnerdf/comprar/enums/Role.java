@@ -12,6 +12,7 @@ public enum Role {
 
     ADMIN(Set.of(
     		Permission.READ_PROFILE,
+    		Permission.READ_USER,
             Permission.CREATE_USER,
             Permission.UPDATE_USER,
             Permission.DELETE_USER
