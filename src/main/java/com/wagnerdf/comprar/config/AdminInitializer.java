@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.wagnerdf.comprar.entity.Auth;
 import com.wagnerdf.comprar.entity.Permission;
@@ -27,6 +28,18 @@ public class AdminInitializer implements CommandLineRunner {
     private final AuthRepository authRepository;
     private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
+    
+    @Value("${admin.name}")
+    private String adminName;
+
+    @Value("${admin.username}")
+    private String adminUsername;
+
+    @Value("${admin.email}")
+    private String adminEmail;
+
+    @Value("${admin.password}")
+    private String adminPassword;
 
     @Override
     public void run(String... args) {
@@ -36,8 +49,8 @@ public class AdminInitializer implements CommandLineRunner {
         }
 
         User user = User.builder()
-                .name("Administrador")
-                .email("admin@comprar.com")
+                .name(adminName)
+                .email(adminEmail)
                 .birthDate(java.time.LocalDate.of(2000, 1, 1))
                 .gender(Gender.OTHER)
                 .active(true)
@@ -59,8 +72,8 @@ public class AdminInitializer implements CommandLineRunner {
 
         Auth auth = Auth.builder()
                 .user(savedUser)
-                .username("admin")
-                .password(passwordEncoder.encode("123456"))
+                .username(adminUsername)
+                .password(passwordEncoder.encode(adminPassword))
                 .role(Role.ADMIN)
                 .permissions(permissions)
                 .build();
@@ -69,8 +82,8 @@ public class AdminInitializer implements CommandLineRunner {
 
         System.out.println("======================================");
         System.out.println("ADMIN PADRÃO CRIADO");
-        System.out.println("Usuário: admin");
-        System.out.println("Senha: 123456");
+        System.out.println("Usuário: " + adminUsername);
+        System.out.println("Senha: " + adminPassword);
         System.out.println("======================================");
     }
 }
