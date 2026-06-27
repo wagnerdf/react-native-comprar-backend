@@ -47,6 +47,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PermissionRepository permissionRepository;
+    private final PermissionService permissionService;
     private final AuditService auditService;
     private final JwtService jwtService;
 
@@ -85,15 +86,8 @@ public class UserService {
         // =========================
         // PERMISSÕES PADRÃO
         // =========================
-        Set<Permission> permissions = Role.USER.getPermissions()
-                .stream()
-                .map(permissionEnum ->
-                        permissionRepository.findByName(permissionEnum.name())
-                                .orElseThrow(() ->
-                                        new RuntimeException(
-                                                "Permissão não encontrada: " + permissionEnum.name()
-                                        )))
-                .collect(Collectors.toSet());
+        Set<Permission> permissions =
+                permissionService.getPermissionsByRole(Role.USER);
 
         // =========================
         // ROLE PADRÃO

@@ -17,6 +17,7 @@ import com.wagnerdf.comprar.enums.Role;
 import com.wagnerdf.comprar.repository.AuthRepository;
 import com.wagnerdf.comprar.repository.PermissionRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
+import com.wagnerdf.comprar.service.PermissionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +29,7 @@ public class AdminInitializer implements CommandLineRunner {
     private final AuthRepository authRepository;
     private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PermissionService permissionService;
     
     @Value("${admin.name}")
     private String adminName;
@@ -60,15 +62,8 @@ public class AdminInitializer implements CommandLineRunner {
 
         User savedUser = userRepository.save(user);
 
-        Set<Permission> permissions = Role.ADMIN.getPermissions()
-                .stream()
-                .map(permissionEnum ->
-                        permissionRepository.findByName(permissionEnum.name())
-                                .orElseThrow(() ->
-                                        new RuntimeException(
-                                                "Permissão não encontrada: "
-                                                        + permissionEnum.name())))
-                .collect(Collectors.toSet());
+        Set<Permission> permissions =
+                permissionService.getPermissionsByRole(Role.ADMIN);
 
         Auth auth = Auth.builder()
                 .user(savedUser)
