@@ -23,6 +23,16 @@ public class AddressService {
     private final AuthenticatedUserService authenticatedUserService;
     private final AuditService auditService;
 
+    // ==================================================================================
+    // ----------------Cadastro de endereço------------------
+    // 🎯 VALIDAÇÕES
+    // ✅ Apenas o usuário autenticado pode cadastrar seus próprios endereços.
+    // ✅ O userId nunca será enviado pelo cliente.
+    // ✅ Máximo de 10 endereços por usuário.
+    // ✅ O primeiro endereço cadastrado será automaticamente o endereço padrão.
+    // ✅ Apenas um endereço pode ser marcado como padrão por vez.
+    // ✅ Endereços poderão ser editados e removidos posteriormente.
+    // ==================================================================================
     public AddressResponse create(AddressRequest request) {
 
         User user = authenticatedUserService.getCurrentUser();
