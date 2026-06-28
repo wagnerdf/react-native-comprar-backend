@@ -1,0 +1,15 @@
+package com.wagnerdf.comprar.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.wagnerdf.comprar.entity.Address;
+import com.wagnerdf.comprar.entity.User;
+
+public interface AddressRepository extends JpaRepository<Address, String> {
+
+    long countByUser(User user);
+
+    List<Address> findByUser(User user);
+}
