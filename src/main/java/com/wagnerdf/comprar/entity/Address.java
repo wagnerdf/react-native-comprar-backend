@@ -2,6 +2,8 @@ package com.wagnerdf.comprar.entity;
 
 import java.time.LocalDateTime;
 
+import com.wagnerdf.comprar.enums.State;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,8 +48,9 @@ public class Address {
     @Column(nullable = false, length = 150)
     private String city;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 2)
-    private String state;
+    private State state;
 
     @Column(length = 255)
     private String reference;
