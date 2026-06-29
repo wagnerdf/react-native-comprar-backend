@@ -1,6 +1,7 @@
 package com.wagnerdf.comprar.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,6 @@ import com.wagnerdf.comprar.entity.User;
 import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.mapper.AddressMapper;
 import com.wagnerdf.comprar.repository.AddressRepository;
-import com.wagnerdf.comprar.repository.AuthRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -61,6 +61,25 @@ public class AddressService {
         );
 
         return AddressMapper.toResponse(savedAddress);
+    }
+    // ==================================================================================
+    // ----------------Listagem de endereço------------------
+    // 🎯 Regras
+    // ✅ Retornar apenas os endereços do usuário autenticado.
+    // ✅ Não receber userId na URL nem como parâmetro.
+    // ✅ Utilizar o AuthenticatedUserService.
+    // ✅ Retornar uma lista de AddressResponse.
+    // ❌ Sem paginação (como tem 10 endereços, a paginação não sera aplicada).
+    // ❌ Não registrar em audit_logs.
+    // ==================================================================================
+    public List<AddressResponse> findAll() {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        return addressRepository.findByUserOrderByDefaultAddressDescCreatedAtAsc(user)
+                .stream()
+                .map(AddressMapper::toResponse)
+                .toList();
     }
 
 }

@@ -12,4 +12,6 @@ public interface AddressRepository extends JpaRepository<Address, String> {
     long countByUser(User user);
 
     List<Address> findByUser(User user);
+    
+    List<Address> findByUserOrderByDefaultAddressDescCreatedAtAsc(User user);
 }

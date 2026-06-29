@@ -1,5 +1,7 @@
 package com.wagnerdf.comprar.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,5 +29,11 @@ public class AddressController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(addressService.create(request));
+    }
+    
+    @GetMapping("/addresses")
+    public ResponseEntity<List<AddressResponse>> findAll() {
+
+        return ResponseEntity.ok(addressService.findAll());
     }
 }
