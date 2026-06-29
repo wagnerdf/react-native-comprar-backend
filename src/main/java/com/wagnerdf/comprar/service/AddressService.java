@@ -81,5 +81,39 @@ public class AddressService {
                 .map(AddressMapper::toResponse)
                 .toList();
     }
+    // ==================================================================================
+    // ----------------Edição de endereço------------------
+    // 🎯 Regras
+    // ✅ Apenas o dono do endereço pode alterá-lo.
+    // ✅ O id virá pela URL.
+    // ✅ O usuário não poderá alterar o defaultAddress pelo PUT.
+    // ✅ O usuário não poderá trocar o endereço de dono (user).
+    // ✅ createdAt permanece inalterado.
+    // ✅ updatedAt será atualizado automaticamente.
+    // ✅ Registrar auditoria (UPDATE_ADDRESS).
+    // ✅ Retornar 404 caso o endereço não exista.
+    // ✅ Retornar 403 caso tente editar endereço de outro usuário.
+    // ==================================================================================
+    public AddressResponse update(String id, AddressRequest request) {
 
+        User user = authenticatedUserService.getCurrentUser();
+
+        Address address = addressRepository
+                .findByIdAndUser(id, user)
+                .orElseThrow(() ->
+                        new BusinessException("Endereço não encontrado."));
+
+        AddressMapper.updateEntity(address, request);
+
+        address.setUpdatedAt(LocalDateTime.now());
+
+        Address saved = addressRepository.save(address);
+
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "UPDATE_ADDRESS"
+        );
+
+        return AddressMapper.toResponse(saved);
+    }
 }

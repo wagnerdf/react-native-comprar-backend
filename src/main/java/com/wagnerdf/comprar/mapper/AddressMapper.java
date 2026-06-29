@@ -39,5 +39,18 @@ public class AddressMapper {
                 .defaultAddress(address.getDefaultAddress())
                 .build();
     }
+    
+    public static void updateEntity(Address address, AddressRequest request) {
 
+        address.setNickname(request.getNickname());
+        address.setRecipientName(request.getRecipientName());
+        address.setZipCode(request.getZipCode());
+        address.setStreet(request.getStreet());
+        address.setNumber(request.getNumber());
+        address.setComplement(request.getComplement());
+        address.setNeighborhood(request.getNeighborhood());
+        address.setCity(request.getCity());
+        address.setState(request.getState());
+        address.setReference(request.getReference());
+    }
 }

@@ -36,4 +36,14 @@ public class AddressController {
 
         return ResponseEntity.ok(addressService.findAll());
     }
+    
+    @PutMapping("/addresses/{id}")
+    public ResponseEntity<AddressResponse> update(
+            @PathVariable String id,
+            @Valid @RequestBody AddressRequest request) {
+
+        return ResponseEntity.ok(
+                addressService.update(id, request)
+        );
+    }
 }
