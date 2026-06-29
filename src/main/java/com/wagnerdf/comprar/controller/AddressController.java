@@ -46,4 +46,13 @@ public class AddressController {
                 addressService.update(id, request)
         );
     }
+    
+    @DeleteMapping("/addresses/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable String id) {
+
+        addressService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

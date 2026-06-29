@@ -62,6 +62,7 @@ public class AddressService {
 
         return AddressMapper.toResponse(savedAddress);
     }
+    
     // ==================================================================================
     // ----------------Listagem de endereço------------------
     // 🎯 Regras
@@ -81,6 +82,7 @@ public class AddressService {
                 .map(AddressMapper::toResponse)
                 .toList();
     }
+    
     // ==================================================================================
     // ----------------Edição de endereço------------------
     // 🎯 Regras
@@ -115,5 +117,62 @@ public class AddressService {
         );
 
         return AddressMapper.toResponse(saved);
+    }
+    
+	 // ==================================================================================
+	 // --------Busca endereço pelo ID e usuário autenticado---------
+	 // 🎯 Objetivo
+	 // ✅ Buscar um endereço pelo ID.
+	 // ✅ Garantir que o endereço pertença ao usuário autenticado.
+	 // ✅ Lançar BusinessException caso o endereço não seja encontrado.
+	 // ==================================================================================
+    private Address findAddress(String id, User user) {
+
+        return addressRepository.findByIdAndUser(id, user)
+                .orElseThrow(() ->
+                        new BusinessException("Endereço não encontrado."));
+    }
+    
+	 // ==================================================================================
+	 // ----------------Exclusão de endereço------------------
+	 // 🎯 Regras
+	 // ✅ Apenas o dono do endereço pode excluí-lo.
+	 // ✅ O id virá pela URL.
+	 // ✅ Registrar auditoria (DELETE_ADDRESS).
+	 // ✅ Se o endereço for padrão, promover automaticamente o último endereço cadastrado.
+	 // ✅ Se não existir outro endereço, nenhum ficará como padrão.
+	 // ✅ Retornar 404 caso o endereço não exista.
+	 // ✅ Retornar 403 caso tente excluir endereço de outro usuário.
+	 // ==================================================================================
+
+    public void delete(String id) {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        Address address = findAddress(id, user);
+
+        boolean wasDefault = address.getDefaultAddress();
+
+        addressRepository.delete(address);
+
+        if (wasDefault) {
+
+            addressRepository
+                    .findFirstByUserOrderByCreatedAtDesc(user)
+                    .ifPresent(lastAddress -> {
+
+                        lastAddress.setDefaultAddress(true);
+
+                        lastAddress.setUpdatedAt(LocalDateTime.now());
+
+                        addressRepository.save(lastAddress);
+
+                    });
+        }
+
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "DELETE_ADDRESS"
+        );
     }
 }
