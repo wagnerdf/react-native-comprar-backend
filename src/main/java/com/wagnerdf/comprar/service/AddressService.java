@@ -11,6 +11,7 @@ import com.wagnerdf.comprar.entity.Address;
 import com.wagnerdf.comprar.entity.User;
 import com.wagnerdf.comprar.exception.AddressNotFoundException;
 import com.wagnerdf.comprar.exception.BusinessException;
+import com.wagnerdf.comprar.exception.ForbiddenException;
 import com.wagnerdf.comprar.mapper.AddressMapper;
 import com.wagnerdf.comprar.repository.AddressRepository;
 
@@ -101,10 +102,7 @@ public class AddressService {
 
         User user = authenticatedUserService.getCurrentUser();
 
-        Address address = addressRepository
-                .findByIdAndUser(id, user)
-                .orElseThrow(() ->
-                        new BusinessException("Endereço não encontrado."));
+        Address address = findAddress(id, user);
 
         AddressMapper.updateEntity(address, request);
 
@@ -129,9 +127,16 @@ public class AddressService {
 	 // ==================================================================================
     private Address findAddress(String id, User user) {
 
-        return addressRepository.findByIdAndUser(id, user)
+        Address address = addressRepository.findById(id)
                 .orElseThrow(() ->
-                new AddressNotFoundException("Endereço não encontrado."));
+                        new AddressNotFoundException("Endereço não encontrado."));
+
+        if (!address.getUser().getId().equals(user.getId())) {
+            throw new ForbiddenException(
+                    "Você não possui permissão para acessar este endereço.");
+        }
+
+        return address;
     }
     
 	 // ==================================================================================

@@ -162,4 +162,23 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(error);
     }
+    
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleForbidden(
+            ForbiddenException ex,
+            HttpServletRequest request
+    ) {
+
+        ApiError error = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Forbidden")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(error);
+    }
 }
