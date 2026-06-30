@@ -9,6 +9,7 @@ import com.wagnerdf.comprar.dto.request.AddressRequest;
 import com.wagnerdf.comprar.dto.response.AddressResponse;
 import com.wagnerdf.comprar.entity.Address;
 import com.wagnerdf.comprar.entity.User;
+import com.wagnerdf.comprar.exception.AddressNotFoundException;
 import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.mapper.AddressMapper;
 import com.wagnerdf.comprar.repository.AddressRepository;
@@ -130,7 +131,7 @@ public class AddressService {
 
         return addressRepository.findByIdAndUser(id, user)
                 .orElseThrow(() ->
-                        new BusinessException("Endereço não encontrado."));
+                new AddressNotFoundException("Endereço não encontrado."));
     }
     
 	 // ==================================================================================
@@ -186,7 +187,8 @@ public class AddressService {
 	 // ✅ O endereço informado será definido como padrão.
 	 // ✅ updatedAt será atualizado automaticamente.
 	 // ✅ Registrar auditoria (SET_DEFAULT_ADDRESS).
-	 // ✅ Retornar 400 caso o endereço não exista.
+	 // ✅ Retornar 404 caso o endereço não exista.
+	 // ✅ Retornar 403 caso tente alterar endereço de outro usuário.
 	 // ==================================================================================
     public AddressResponse setDefault(String id) {
 
