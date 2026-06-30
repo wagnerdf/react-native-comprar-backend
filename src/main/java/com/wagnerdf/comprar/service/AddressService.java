@@ -175,4 +175,44 @@ public class AddressService {
                 "DELETE_ADDRESS"
         );
     }
+    
+	 // ==================================================================================
+	 // -------------Definir endereço padrão----------------
+	 // 🎯 Regras
+	 // ✅ Apenas o dono do endereço pode defini-lo como padrão.
+	 // ✅ O id virá pela URL.
+	 // ✅ O endereço deve existir.
+	 // ✅ Todos os demais endereços do usuário perderão o status de padrão.
+	 // ✅ O endereço informado será definido como padrão.
+	 // ✅ updatedAt será atualizado automaticamente.
+	 // ✅ Registrar auditoria (SET_DEFAULT_ADDRESS).
+	 // ✅ Retornar 400 caso o endereço não exista.
+	 // ==================================================================================
+    public AddressResponse setDefault(String id) {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        Address address = findAddress(id, user);
+
+        List<Address> addresses = addressRepository.findByUser(user);
+
+        for (Address item : addresses) {
+
+            item.setDefaultAddress(false);
+            item.setUpdatedAt(LocalDateTime.now());
+
+        }
+
+        address.setDefaultAddress(true);
+        address.setUpdatedAt(LocalDateTime.now());
+
+        addressRepository.saveAll(addresses);
+
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "SET_DEFAULT_ADDRESS"
+        );
+
+        return AddressMapper.toResponse(address);
+    }
 }

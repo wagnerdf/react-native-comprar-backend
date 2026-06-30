@@ -55,4 +55,13 @@ public class AddressController {
 
         return ResponseEntity.noContent().build();
     }
+    
+    @PatchMapping("/addresses/{id}/default")
+    public ResponseEntity<AddressResponse> setDefault(
+            @PathVariable String id) {
+
+        return ResponseEntity.ok(
+                addressService.setDefault(id)
+        );
+    }
 }
