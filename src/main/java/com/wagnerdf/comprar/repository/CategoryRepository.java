@@ -10,9 +10,9 @@ import com.wagnerdf.comprar.entity.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, String> {
 
-    Optional<Category> findByName(String name);
+    Optional<Category> findByNameIgnoreCase(String name);
 
-    boolean existsByName(String name);
+    boolean existsByNameIngnoreCase(String name);
     
     Optional<Category> findByIdAndActiveTrue(String id);
     

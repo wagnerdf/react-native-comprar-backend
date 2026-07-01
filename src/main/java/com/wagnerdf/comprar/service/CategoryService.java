@@ -36,14 +36,21 @@ public class CategoryService {
     // ✅ Registrar auditoria (CREATE_CATEGORY).
     // ================================================================================
 
+    private String normalizeCategoryName(String name) {
+        return name.trim();
+    }
+    
     public CategoryResponse create(CategoryRequest request) {
+    	
+    	String categoryName = normalizeCategoryName(request.getName());
 
-        if (categoryRepository.existsByName(request.getName())) {
+        if (categoryRepository.existsByNameIngnoreCase(categoryName)) {
             throw new BusinessException("Categoria já cadastrada.");
         }
 
         Category category = CategoryMapper.toEntity(request);
 
+        category.setName(categoryName);
         category.setActive(true);
         category.setCreatedAt(LocalDateTime.now());
         category.setUpdatedAt(LocalDateTime.now());
@@ -91,8 +98,10 @@ public class CategoryService {
 	public CategoryResponse update(String id, CategoryRequest request) {
 
 	    Category category = findCategory(id);
+	    
+	    String categoryName = normalizeCategoryName(request.getName());
 
-	    categoryRepository.findByName(request.getName())
+	    categoryRepository.findByNameIgnoreCase(categoryName)
 	            .ifPresent(existing -> {
 
 	                if (!existing.getId().equals(category.getId())) {
@@ -101,7 +110,7 @@ public class CategoryService {
 
 	            });
 
-	    category.setName(request.getName());
+	    category.setName(categoryName);
 	    category.setDescription(request.getDescription());
 
 	    category.setUpdatedAt(LocalDateTime.now());
