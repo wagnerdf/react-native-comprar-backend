@@ -69,5 +69,17 @@ public class CategoryController {
         );
 
     }
+    
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> delete(
+            @PathVariable String id
+    ) {
+
+        categoryService.delete(id);
+
+        return ResponseEntity.noContent().build();
+
+    }
 
 }

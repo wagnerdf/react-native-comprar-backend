@@ -143,5 +143,31 @@ public class CategoryService {
 	                    ));
 
 	}
+	
+	// ================================================================================
+	// ----------------Exclusão de Categoria----------------
+	// 🎯 Regras
+	// ✅ Apenas ADMIN poderá excluir categorias.
+	// ✅ Categoria deve existir.
+	// ✅ Exclusão lógica (active = false).
+	// ✅ Atualizar updatedAt.
+	// ✅ Registrar auditoria (DELETE_CATEGORY).
+	// ================================================================================
+
+	public void delete(String id) {
+
+	    Category category = findCategory(id);
+
+	    category.setActive(false);
+	    category.setUpdatedAt(LocalDateTime.now());
+
+	    categoryRepository.save(category);
+
+	    auditService.log(
+	            authenticatedUserService.getCurrentUser().getEmail(),
+	            "DELETE_CATEGORY"
+	    );
+
+	}
 
 }
