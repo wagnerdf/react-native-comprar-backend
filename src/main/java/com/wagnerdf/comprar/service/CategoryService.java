@@ -44,7 +44,7 @@ public class CategoryService {
     	
     	String categoryName = normalizeCategoryName(request.getName());
 
-        if (categoryRepository.existsByNameIngnoreCase(categoryName)) {
+        if (categoryRepository.existsByNameIgnoreCase(categoryName)) {
             throw new BusinessException("Categoria já cadastrada.");
         }
 
