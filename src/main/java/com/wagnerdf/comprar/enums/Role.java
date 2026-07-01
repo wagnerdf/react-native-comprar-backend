@@ -15,7 +15,11 @@ public enum Role {
     		Permission.READ_USER,
             Permission.CREATE_USER,
             Permission.UPDATE_USER,
-            Permission.DELETE_USER
+            Permission.DELETE_USER,
+            Permission.CREATE_CATEGORY,
+            Permission.READ_CATEGORY,
+            Permission.UPDATE_CATEGORY,
+            Permission.DELETE_CATEGORY
     ));
 
     private final Set<Permission> permissions;

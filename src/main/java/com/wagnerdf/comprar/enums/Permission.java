@@ -5,5 +5,9 @@ public enum Permission {
     CREATE_USER,
     DELETE_USER,
     UPDATE_USER,
-    READ_USER
+    READ_USER,
+    CREATE_CATEGORY,
+    READ_CATEGORY,
+    UPDATE_CATEGORY,
+    DELETE_CATEGORY
 }
