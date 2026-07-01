@@ -2,6 +2,8 @@ package com.wagnerdf.comprar.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.wagnerdf.comprar.dto.request.CategoryRequest;
@@ -54,5 +56,22 @@ public class CategoryService {
 
         return CategoryMapper.toResponse(saved);
     }
+    
+	 // ================================================================================
+	 // ----------------Listagem de Categorias----------------
+	 // 🎯 Regras
+	 // ✅ Listar somente categorias ativas.
+	 // ✅ Retornar paginação.
+	 // ✅ Ordenar por nome.
+	 // ✅ Não registrar auditoria.
+	 // ================================================================================
+	
+	 public Page<CategoryResponse> list(Pageable pageable) {
+	
+	     return categoryRepository
+	             .findByActiveTrue(pageable)
+	             .map(CategoryMapper::toResponse);
+	
+	 }
 
 }
