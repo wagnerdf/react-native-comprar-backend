@@ -23,6 +23,10 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final AuditService auditService;
     private final AuthenticatedUserService authenticatedUserService;
+    
+    private String normalizeCategoryName(String name) {
+        return name.trim();
+    }
 
     // ================================================================================
     // ----------------Cadastro de Categoria----------------
@@ -35,11 +39,6 @@ public class CategoryService {
     // ✅ updatedAt recebe data atual.
     // ✅ Registrar auditoria (CREATE_CATEGORY).
     // ================================================================================
-
-    private String normalizeCategoryName(String name) {
-        return name.trim();
-    }
-    
     public CategoryResponse create(CategoryRequest request) {
     	
     	String categoryName = normalizeCategoryName(request.getName());
@@ -58,7 +57,7 @@ public class CategoryService {
         Category saved = categoryRepository.save(category);
 
         auditService.log(
-                authenticatedUserService.getCurrentUser().getEmail(),
+                authenticatedUserService.getCurrentUsername(),
                 "CREATE_CATEGORY"
         );
 
@@ -94,7 +93,6 @@ public class CategoryService {
 	// ✅ Atualizar updatedAt.
 	// ✅ Registrar auditoria (UPDATE_CATEGORY).
 	// ================================================================================
-
 	public CategoryResponse update(String id, CategoryRequest request) {
 
 	    Category category = findCategory(id);
@@ -118,7 +116,7 @@ public class CategoryService {
 	    Category updated = categoryRepository.save(category);
 
 	    auditService.log(
-	            authenticatedUserService.getCurrentUser().getEmail(),
+	            authenticatedUserService.getCurrentUsername(),
 	            "UPDATE_CATEGORY"
 	    );
 
@@ -164,7 +162,7 @@ public class CategoryService {
 	    categoryRepository.save(category);
 
 	    auditService.log(
-	            authenticatedUserService.getCurrentUser().getEmail(),
+	            authenticatedUserService.getCurrentUsername(),
 	            "DELETE_CATEGORY"
 	    );
 
