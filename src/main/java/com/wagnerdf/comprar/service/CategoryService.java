@@ -10,6 +10,7 @@ import com.wagnerdf.comprar.dto.request.CategoryRequest;
 import com.wagnerdf.comprar.dto.response.CategoryResponse;
 import com.wagnerdf.comprar.entity.Category;
 import com.wagnerdf.comprar.exception.BusinessException;
+import com.wagnerdf.comprar.exception.CategoryNotFoundException;
 import com.wagnerdf.comprar.mapper.CategoryMapper;
 import com.wagnerdf.comprar.repository.CategoryRepository;
 
@@ -73,5 +74,65 @@ public class CategoryService {
 	             .map(CategoryMapper::toResponse);
 	
 	 }
+	 
+	// ================================================================================
+	// ----------------Edição de Categoria----------------
+	// 🎯 Regras
+	// ✅ Apenas ADMIN poderá editar categorias.
+	// ✅ Categoria deve existir.
+	// ✅ Nome continua único.
+	// ✅ Não alterar id.
+	// ✅ Não alterar active.
+	// ✅ Não alterar createdAt.
+	// ✅ Atualizar updatedAt.
+	// ✅ Registrar auditoria (UPDATE_CATEGORY).
+	// ================================================================================
+
+	public CategoryResponse update(String id, CategoryRequest request) {
+
+	    Category category = findCategory(id);
+
+	    categoryRepository.findByName(request.getName())
+	            .ifPresent(existing -> {
+
+	                if (!existing.getId().equals(category.getId())) {
+	                    throw new BusinessException("Categoria já cadastrada.");
+	                }
+
+	            });
+
+	    category.setName(request.getName());
+	    category.setDescription(request.getDescription());
+
+	    category.setUpdatedAt(LocalDateTime.now());
+
+	    Category updated = categoryRepository.save(category);
+
+	    auditService.log(
+	            authenticatedUserService.getCurrentUser().getEmail(),
+	            "UPDATE_CATEGORY"
+	    );
+
+	    return CategoryMapper.toResponse(updated);
+
+	}
+	
+	// ================================================================================
+	// ----------------Busca de Categoria----------------
+	// 🎯 Regras
+	// ✅ Centraliza a busca por categoria.
+	// ✅ Retorna 404 caso não exista.
+	// ================================================================================
+
+	private Category findCategory(String id) {
+
+	    return categoryRepository
+	            .findByIdAndActiveTrue(id)
+	            .orElseThrow(() ->
+	                    new CategoryNotFoundException(
+	                            "Categoria não encontrada."
+	                    ));
+
+	}
 
 }

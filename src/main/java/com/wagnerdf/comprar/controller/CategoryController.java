@@ -53,5 +53,21 @@ public class CategoryController {
         );
 
     }
+    
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoryResponse> update(
+
+            @PathVariable String id,
+
+            @Valid
+            @RequestBody CategoryRequest request
+    ) {
+
+        return ResponseEntity.ok(
+                categoryService.update(id, request)
+        );
+
+    }
 
 }
