@@ -167,5 +167,56 @@ public class CategoryService {
 	    );
 
 	}
+	
+	// ================================================================================
+	// ----------------Reativação de Categoria----------------
+	// 🎯 Regras
+	// ✅ Apenas ADMIN poderá reativar categorias.
+	// ✅ Categoria deve existir.
+	// ✅ Categoria deve estar inativa.
+	// ✅ Alterar active para true.
+	// ✅ Atualizar updatedAt.
+	// ✅ Registrar auditoria (REACTIVATE_CATEGORY).
+	// ================================================================================
+
+	public CategoryResponse reactivate(String id) {
+
+	    Category category = findCategoryIncludingInactive(id);
+
+	    if (Boolean.TRUE.equals(category.getActive())) {
+	        throw new BusinessException("Categoria já está ativa.");
+	    }
+
+	    category.setActive(true);
+	    category.setUpdatedAt(LocalDateTime.now());
+
+	    Category updated = categoryRepository.save(category);
+
+	    auditService.log(
+	            authenticatedUserService.getCurrentUsername(),
+	            "REACTIVATE_CATEGORY"
+	    );
+
+	    return CategoryMapper.toResponse(updated);
+	}
+	
+	// ================================================================================
+	// ----------------Busca de Categoria----------------
+	// 🎯 Regras
+	// ✅ Busca categorias ativas e inativas.
+	// ✅ Utilizado para reativação.
+	// ✅ Retorna 404 caso não exista.
+	// ================================================================================
+
+	private Category findCategoryIncludingInactive(String id) {
+
+	    return categoryRepository
+	            .findById(id)
+	            .orElseThrow(() ->
+	                    new CategoryNotFoundException("Categoria não encontrada.")
+	            );
+
+	}
+	
 
 }

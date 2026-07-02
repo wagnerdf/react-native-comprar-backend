@@ -81,5 +81,17 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
 
     }
+    
+    @PatchMapping("/{id}/reactivate")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoryResponse> reactivate(
+            @PathVariable String id
+    ) {
+
+        return ResponseEntity.ok(
+                categoryService.reactivate(id)
+        );
+
+    }
 
 }

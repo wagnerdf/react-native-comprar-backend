@@ -19,7 +19,8 @@ public enum Role {
             Permission.CREATE_CATEGORY,
             Permission.READ_CATEGORY,
             Permission.UPDATE_CATEGORY,
-            Permission.DELETE_CATEGORY
+            Permission.DELETE_CATEGORY,
+            Permission.REACTIVATE_CATEGORY
     ));
 
     private final Set<Permission> permissions;
