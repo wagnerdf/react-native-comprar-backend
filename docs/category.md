@@ -41,6 +41,7 @@ O módulo **Category** é responsável pelo gerenciamento das categorias de prod
 * Apenas categorias ativas são retornadas.
 * A listagem é paginada.
 * Ordenação padrão por nome (ASC).
+* Busca por nome utilizando pesquisa parcial.
 * Não registra auditoria.
 
 ---
@@ -156,6 +157,23 @@ GET /categories?page=0&size=10&sort=name,asc
 
 ---
 
+## Buscar categoria por nome
+
+GET /categories/search?name={nome}
+
+Exemplo:
+
+GET /categories/search?name=ele
+
+Regras:
+
+- Busca parcial.
+- Ignora letras maiúsculas e minúsculas.
+- Retorna apenas categorias ativas.
+- Não registra auditoria.
+
+---
+
 ## Alterar categoria
 
 PUT /categories/{id}
@@ -191,7 +209,6 @@ PATCH /categories/{id}/reactivate
 # Evoluções Futuras
 
 * Impedir exclusão de categorias que possuam produtos vinculados.
-* Pesquisa por nome.
 * Filtro por status (ativas/inativas).
 * Ordenações personalizadas.
 * Upload de imagem para categoria.

@@ -1,6 +1,7 @@
 package com.wagnerdf.comprar.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -218,5 +219,26 @@ public class CategoryService {
 
 	}
 	
+	// ================================================================================
+	// ----------------Busca por Nome----------------
+	// 🎯 Regras
+	// ✅ Buscar apenas categorias ativas.
+	// ✅ Busca parcial.
+	// ✅ Ignorar maiúsculas/minúsculas.
+	// ✅ Não registrar auditoria.
+	// ================================================================================
 
+	public List<CategoryResponse> search(String name) {
+		
+		if (name == null || name.trim().isBlank()) {
+		    throw new BusinessException("Informe o nome da categoria para pesquisa.");
+		}
+
+	    return categoryRepository
+	            .findByNameContainingIgnoreCaseAndActiveTrue(name.trim())
+	            .stream()
+	            .map(CategoryMapper::toResponse)
+	            .toList();
+
+	}
 }

@@ -1,5 +1,7 @@
 package com.wagnerdf.comprar.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -90,6 +92,19 @@ public class CategoryController {
 
         return ResponseEntity.ok(
                 categoryService.reactivate(id)
+        );
+
+    }
+    
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<List<CategoryResponse>> search(
+
+            @RequestParam String name
+    ) {
+
+        return ResponseEntity.ok(
+                categoryService.search(name)
         );
 
     }

@@ -1,5 +1,6 @@
 package com.wagnerdf.comprar.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -17,5 +18,7 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     Optional<Category> findByIdAndActiveTrue(String id);
     
     Page<Category> findByActiveTrue(Pageable pageable);
+    
+    List<Category> findByNameContainingIgnoreCaseAndActiveTrue(String name);
 
 }
