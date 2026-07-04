@@ -1,3 +1,7 @@
+## Segurança
+
+Cadastro, alteração, exclusão e reativação de produtos serão permitidos para ADMIN e EMPLOYEE.
+
 # Módulo Product
 
 ## Objetivo
