@@ -321,9 +321,9 @@ public class UserService {
         // AUDITORIA
         // =========================
         auditService.log(
-                authenticatedUserService.getCurrentUser().getName(),
-                "CREATE_EMPLOYEE"
-        );
+	            authenticatedUserService.getCurrentUsername(),
+	            "CREATE_EMPLOYEE"
+	    );
     }
 }
 
