@@ -1,5 +1,6 @@
 package com.wagnerdf.comprar.service;
 
+import com.wagnerdf.comprar.dto.request.CreateEmployeeRequest;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
 import com.wagnerdf.comprar.dto.response.UserDetailResponse;
@@ -13,7 +14,6 @@ import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.exception.UserNotFoundException;
 import com.wagnerdf.comprar.mapper.UserMapper;
 import com.wagnerdf.comprar.repository.AuthRepository;
-import com.wagnerdf.comprar.repository.PermissionRepository;
 import com.wagnerdf.comprar.repository.RefreshTokenRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
 import com.wagnerdf.comprar.security.JwtService;
@@ -36,7 +36,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,10 +45,10 @@ public class UserService {
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final PermissionRepository permissionRepository;
     private final PermissionService permissionService;
     private final AuditService auditService;
     private final JwtService jwtService;
+    private final AuthenticatedUserService authenticatedUserService;
 
     @Transactional
     public void createUser(RegisterRequest request) {
@@ -245,6 +244,86 @@ public class UserService {
         user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
+    }
+    
+    @Service
+    @RequiredArgsConstructor
+    public class EmployeeService {
+
+        private final UserService userService;
+
+        public void createEmployee(CreateEmployeeRequest request) {
+
+            userService.createEmployee(request);
+
+        }
+
+    }
+    
+    @Transactional
+    public void createEmployee(CreateEmployeeRequest request) {
+
+        // =========================
+        // VALIDAÇÕES
+        // =========================
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new BusinessException("Email já cadastrado");
+        }
+
+        if (authRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new BusinessException("Username já cadastrado");
+        }
+
+        // =========================
+        // MAPPER
+        // =========================
+        User user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .birthDate(request.getBirthDate())
+                .gender(request.getGender())
+                .build();
+
+        // =========================
+        // REGRAS DE NEGÓCIO
+        // =========================
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        user.setActive(true);
+
+        User savedUser = userRepository.save(user);
+
+        // =========================
+        // PERMISSÕES PADRÃO
+        // =========================
+        Set<Permission> permissions =
+                permissionService.getPermissionsByRole(Role.EMPLOYEE);
+
+        // =========================
+        // ROLE PADRÃO
+        // =========================
+        Role role = Role.EMPLOYEE;
+
+        // =========================
+        // AUTH
+        // =========================
+        Auth auth = Auth.builder()
+                .user(savedUser)
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(role)
+                .permissions(permissions)
+                .build();
+
+        authRepository.save(auth);
+
+        // =========================
+        // AUDITORIA
+        // =========================
+        auditService.log(
+                authenticatedUserService.getCurrentUser().getName(),
+                "CREATE_EMPLOYEE"
+        );
     }
 }
 

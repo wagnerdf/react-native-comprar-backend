@@ -2,6 +2,14 @@
 
 ## Roles
 
+---
+
+- ADMIN administra pessoas e o sistema.
+- EMPLOYEE opera o negócio.
+- USER consome o serviço.
+
+---
+
 ### ADMIN
 
 Responsável pela administração completa do sistema.
@@ -45,3 +53,22 @@ Permissões:
 - STOCK
 - FINANCIAL
 - SUPPORT
+
+## Fluxo de criação de usuários
+
+ADMIN
+↓
+
+Cria EMPLOYEE
+
+EMPLOYEE
+
+↓
+
+Opera o sistema
+
+USER
+
+↓
+
+Auto cadastro
