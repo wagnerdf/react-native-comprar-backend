@@ -1,14 +1,41 @@
 package com.wagnerdf.comprar.enums;
 
 public enum Permission {
+	
+    // =========================
+    // PERFIL
+    // =========================
     READ_PROFILE,
+
+    // =========================
+    // USUÁRIOS
+    // =========================
     CREATE_USER,
-    DELETE_USER,
-    UPDATE_USER,
     READ_USER,
+    UPDATE_USER,
+    DELETE_USER,
+
+    // =========================
+    // CATEGORIAS
+    // =========================
     CREATE_CATEGORY,
     READ_CATEGORY,
     UPDATE_CATEGORY,
     DELETE_CATEGORY,
-    REACTIVATE_CATEGORY
+    REACTIVATE_CATEGORY,
+
+    // =========================
+    // PRODUTOS
+    // =========================
+    CREATE_PRODUCT,
+    READ_PRODUCT,
+    UPDATE_PRODUCT,
+    DELETE_PRODUCT,
+    REACTIVATE_PRODUCT,
+
+    // =========================
+    // PEDIDOS
+    // =========================
+    READ_ORDER,
+    UPDATE_ORDER
 }
