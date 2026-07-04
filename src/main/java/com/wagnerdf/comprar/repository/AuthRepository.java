@@ -7,11 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.wagnerdf.comprar.entity.Auth;
+import com.wagnerdf.comprar.entity.User;
 import com.wagnerdf.comprar.enums.Role;
 
 public interface AuthRepository extends JpaRepository<Auth, String>{
 	
 	Optional<Auth> findByUsername(String username);
+	
+	Optional<Auth> findByUser(User user);
 	
 	boolean existsByRole(Role role);
 	

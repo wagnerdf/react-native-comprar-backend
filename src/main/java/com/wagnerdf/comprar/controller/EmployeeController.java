@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,18 @@ public class EmployeeController {
 
         return ResponseEntity.ok(
                 employeeService.findAll(pageable)
+        );
+
+    }
+    
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('READ_USER')")
+    public ResponseEntity<EmployeeResponse> findById(
+            @PathVariable String id
+    ) {
+
+        return ResponseEntity.ok(
+                employeeService.findById(id)
         );
 
     }

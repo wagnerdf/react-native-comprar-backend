@@ -16,6 +16,7 @@ import com.wagnerdf.comprar.entity.Permission;
 import com.wagnerdf.comprar.entity.User;
 import com.wagnerdf.comprar.enums.Role;
 import com.wagnerdf.comprar.exception.BusinessException;
+import com.wagnerdf.comprar.exception.EmployeeNotFoundException;
 import com.wagnerdf.comprar.repository.AuthRepository;
 import com.wagnerdf.comprar.repository.UserRepository;
 
@@ -112,6 +113,30 @@ public class EmployeeService {
                         .active(auth.getUser().getActive())
                         .username(auth.getUsername())
                         .build());
+    }
+    
+    @Transactional(readOnly = true)
+    public EmployeeResponse findById(String id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Funcionário não encontrado"));
+
+        Auth auth = authRepository.findByUser(user)
+                .orElseThrow(() -> new EmployeeNotFoundException("Funcionário não encontrado"));
+
+        if (auth.getRole() != Role.EMPLOYEE) {
+            throw new EmployeeNotFoundException("Funcionário não encontrado");
+        }
+
+        return EmployeeResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .birthDate(user.getBirthDate())
+                .gender(user.getGender())
+                .active(user.getActive())
+                .username(auth.getUsername())
+                .build();
     }
 
 }
