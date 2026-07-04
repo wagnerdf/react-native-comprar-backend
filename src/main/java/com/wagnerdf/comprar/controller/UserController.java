@@ -2,7 +2,6 @@ package com.wagnerdf.comprar.controller;
 
 
 import com.wagnerdf.comprar.service.UserService;
-import com.wagnerdf.comprar.service.UserService.EmployeeService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +24,6 @@ import com.wagnerdf.comprar.exception.AuthenticationException;
 import com.wagnerdf.comprar.repository.RefreshTokenRepository;
 import com.wagnerdf.comprar.security.JwtService;
 import com.wagnerdf.comprar.annotation.Auditable;
-import com.wagnerdf.comprar.dto.request.CreateEmployeeRequest;
 import com.wagnerdf.comprar.dto.request.LoginRequest;
 
 @RestController
@@ -37,7 +34,6 @@ public class UserController {
 	private final UserService userService;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final JwtService jwtService;
-	private final EmployeeService employeeService;
 	
 	// ================
 	// REGISTER
@@ -248,46 +244,6 @@ public class UserController {
 
 	    return ResponseEntity.noContent().build();
 	}
-	
-	@RestController
-	@RequestMapping("/employees")
-	@RequiredArgsConstructor
-	public class EmployeeController {
-
-	    private final EmployeeService employeeService;
-
-	    @PostMapping
-	    @PreAuthorize("hasRole('ADMIN')")
-	    public ResponseEntity<Void> createEmployee(
-	            @Valid @RequestBody CreateEmployeeRequest request
-	    ) {
-
-	        employeeService.createEmployee(request);
-
-	        return ResponseEntity.status(HttpStatus.CREATED).build();
-	    }
-
-	}
-	
-	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Void> createEmployee(
-	        @Valid @RequestBody CreateEmployeeRequest request
-	) {
-
-	    employeeService.createEmployee(request);
-
-	    return ResponseEntity.status(HttpStatus.CREATED).build();
-
-	}
 }
-
-
-
-
-
-
-
-
 
 

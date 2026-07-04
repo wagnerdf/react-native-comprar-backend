@@ -1,6 +1,5 @@
 package com.wagnerdf.comprar.service;
 
-import com.wagnerdf.comprar.dto.request.CreateEmployeeRequest;
 import com.wagnerdf.comprar.dto.request.RegisterRequest;
 import com.wagnerdf.comprar.dto.response.AuthResponse;
 import com.wagnerdf.comprar.dto.response.UserDetailResponse;
@@ -20,8 +19,7 @@ import com.wagnerdf.comprar.security.JwtService;
 import com.wagnerdf.comprar.specification.UserSpecification;
 import com.wagnerdf.comprar.entity.Permission;
 import com.wagnerdf.comprar.dto.request.UpdateUserRequest;
-
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -48,7 +46,6 @@ public class UserService {
     private final PermissionService permissionService;
     private final AuditService auditService;
     private final JwtService jwtService;
-    private final AuthenticatedUserService authenticatedUserService;
 
     @Transactional
     public void createUser(RegisterRequest request) {
@@ -246,85 +243,7 @@ public class UserService {
         userRepository.save(user);
     }
     
-    @Service
-    @RequiredArgsConstructor
-    public class EmployeeService {
-
-        private final UserService userService;
-
-        public void createEmployee(CreateEmployeeRequest request) {
-
-            userService.createEmployee(request);
-
-        }
-
-    }
     
-    @Transactional
-    public void createEmployee(CreateEmployeeRequest request) {
-
-        // =========================
-        // VALIDAÇÕES
-        // =========================
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new BusinessException("Email já cadastrado");
-        }
-
-        if (authRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new BusinessException("Username já cadastrado");
-        }
-
-        // =========================
-        // MAPPER
-        // =========================
-        User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .birthDate(request.getBirthDate())
-                .gender(request.getGender())
-                .build();
-
-        // =========================
-        // REGRAS DE NEGÓCIO
-        // =========================
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-        user.setActive(true);
-
-        User savedUser = userRepository.save(user);
-
-        // =========================
-        // PERMISSÕES PADRÃO
-        // =========================
-        Set<Permission> permissions =
-                permissionService.getPermissionsByRole(Role.EMPLOYEE);
-
-        // =========================
-        // ROLE PADRÃO
-        // =========================
-        Role role = Role.EMPLOYEE;
-
-        // =========================
-        // AUTH
-        // =========================
-        Auth auth = Auth.builder()
-                .user(savedUser)
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(role)
-                .permissions(permissions)
-                .build();
-
-        authRepository.save(auth);
-
-        // =========================
-        // AUDITORIA
-        // =========================
-        auditService.log(
-	            authenticatedUserService.getCurrentUsername(),
-	            "CREATE_EMPLOYEE"
-	    );
-    }
 }
 
 
