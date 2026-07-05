@@ -27,7 +27,8 @@ public enum Role {
             Permission.REACTIVATE_PRODUCT,
 
             Permission.READ_ORDER,
-            Permission.UPDATE_ORDER
+            Permission.UPDATE_ORDER,
+            Permission.UPDATE_USER
 
     )),
 
@@ -52,7 +53,13 @@ public enum Role {
             Permission.REACTIVATE_PRODUCT,
 
             Permission.READ_ORDER,
-            Permission.UPDATE_ORDER
+            Permission.UPDATE_ORDER,
+            
+            Permission.CREATE_EMPLOYEE,
+            Permission.READ_EMPLOYEE,
+            Permission.UPDATE_EMPLOYEE,
+            Permission.DELETE_EMPLOYEE,
+            Permission.REACTIVATE_EMPLOYEE
     ));
 
     private final Set<Permission> permissions;

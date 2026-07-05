@@ -37,5 +37,14 @@ public enum Permission {
     // PEDIDOS
     // =========================
     READ_ORDER,
-    UPDATE_ORDER
+    UPDATE_ORDER,
+    
+    // =========================
+    // EMPLOYEE
+    // =========================
+    CREATE_EMPLOYEE,
+    READ_EMPLOYEE,
+    UPDATE_EMPLOYEE,
+    DELETE_EMPLOYEE,
+    REACTIVATE_EMPLOYEE,
 }

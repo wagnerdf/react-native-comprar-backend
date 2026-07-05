@@ -40,7 +40,7 @@ public class EmployeeController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('READ_USER')")
+    @PreAuthorize("hasAuthority('READ_EMPLOYEE')")
     public ResponseEntity<Page<EmployeeResponse>> findAll(
             @PageableDefault(size = 10, sort = "username") Pageable pageable
     ) {
@@ -52,7 +52,7 @@ public class EmployeeController {
     }
     
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('READ_USER')")
+    @PreAuthorize("hasAuthority('READ_EMPLOYEE')")
     public ResponseEntity<EmployeeResponse> findById(
             @PathVariable String id
     ) {
