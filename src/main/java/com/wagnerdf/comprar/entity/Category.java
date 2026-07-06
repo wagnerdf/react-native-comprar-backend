@@ -1,6 +1,9 @@
 package com.wagnerdf.comprar.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,7 +42,7 @@ public class Category {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    // Relacionamento preparado para futura implementação do Product
-    //@OneToMany(mappedBy = "category")
-    //private List<Product> products;
+    @OneToMany(mappedBy = "category")
+    @JsonIgnore
+    private List<Product> products;
 }

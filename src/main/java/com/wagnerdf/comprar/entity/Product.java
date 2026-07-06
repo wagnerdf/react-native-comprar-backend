@@ -3,8 +3,6 @@ package com.wagnerdf.comprar.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.wagnerdf.comprar.annotation.AuditableEntity;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +18,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@AuditableEntity
 public class Product {
 
     @Id

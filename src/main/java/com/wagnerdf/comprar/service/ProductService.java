@@ -1,11 +1,74 @@
 package com.wagnerdf.comprar.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.wagnerdf.comprar.dto.request.CreateProductRequest;
+import com.wagnerdf.comprar.entity.Category;
+import com.wagnerdf.comprar.entity.Product;
+import com.wagnerdf.comprar.exception.BusinessException;
+import com.wagnerdf.comprar.exception.CategoryNotFoundException;
+import com.wagnerdf.comprar.mapper.ProductMapper;
+import com.wagnerdf.comprar.repository.CategoryRepository;
+import com.wagnerdf.comprar.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+	
+	private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final AuditService auditService;
+    private final AuthenticatedUserService authenticatedUserService;
+    
+    @Transactional
+    public void createProduct(CreateProductRequest request) {
+
+        // =========================
+        // VALIDAÇÕES
+        // =========================
+        if (productRepository.existsBySku(request.getSku())) {
+            throw new BusinessException("SKU já cadastrado");
+        }
+
+        // =========================
+        // CATEGORY
+        // =========================
+        Category category = categoryRepository
+                .findById(request.getCategoryId())
+                .orElseThrow(() ->
+                        new CategoryNotFoundException("Categoria não encontrada"));
+
+        // =========================
+        // MAPPER
+        // =========================
+        Product product = ProductMapper.toEntity(request);
+
+        // =========================
+        // REGRAS DE NEGÓCIO
+        // =========================
+        product.setCategory(category);
+        product.setActive(true);
+        product.setCreatedAt(LocalDateTime.now());
+        product.setUpdatedAt(LocalDateTime.now());
+
+        // =========================
+        // SAVE
+        // =========================
+        productRepository.save(product);
+
+        // =========================
+        // AUDITORIA
+        // =========================
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "CREATE_PRODUCT"
+        );
+
+    }
 
 }
