@@ -9,11 +9,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wagnerdf.comprar.annotation.Auditable;
 import com.wagnerdf.comprar.dto.request.CreateEmployeeRequest;
+import com.wagnerdf.comprar.dto.request.UpdateEmployeeRequest;
 import com.wagnerdf.comprar.dto.response.EmployeeResponse;
 import com.wagnerdf.comprar.service.EmployeeService;
 
@@ -60,6 +63,20 @@ public class EmployeeController {
         return ResponseEntity.ok(
                 employeeService.findById(id)
         );
+
+    }
+    
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('UPDATE_EMPLOYEE')")
+    @Auditable(action = "UPDATE_EMPLOYEE")
+    public ResponseEntity<Void> updateEmployee(
+            @PathVariable String id,
+            @Valid @RequestBody UpdateEmployeeRequest request
+    ) {
+
+        employeeService.updateEmployee(id, request);
+
+        return ResponseEntity.ok().build();
 
     }
 

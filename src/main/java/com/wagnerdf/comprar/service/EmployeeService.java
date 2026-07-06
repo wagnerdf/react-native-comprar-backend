@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wagnerdf.comprar.dto.request.CreateEmployeeRequest;
+import com.wagnerdf.comprar.dto.request.UpdateEmployeeRequest;
 import com.wagnerdf.comprar.dto.response.EmployeeResponse;
 import com.wagnerdf.comprar.entity.Auth;
 import com.wagnerdf.comprar.entity.Permission;
@@ -137,6 +138,43 @@ public class EmployeeService {
                 .active(user.getActive())
                 .username(auth.getUsername())
                 .build();
+    }
+    
+    @Transactional
+    public void updateEmployee(String id, UpdateEmployeeRequest request) {
+
+        // =========================
+        // BUSCA USER
+        // =========================
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new EmployeeNotFoundException("Funcionário não encontrado"));
+
+        // =========================
+        // BUSCA AUTH
+        // =========================
+        Auth auth = authRepository.findByUser(user)
+                .orElseThrow(() ->
+                        new EmployeeNotFoundException("Funcionário não encontrado"));
+
+        // =========================
+        // VALIDA SE É EMPLOYEE
+        // =========================
+        if (auth.getRole() != Role.EMPLOYEE) {
+            throw new EmployeeNotFoundException("Funcionário não encontrado");
+        }
+
+        // =========================
+        // ATUALIZA CAMPOS
+        // =========================
+        user.setName(request.getName().trim());
+        user.setBirthDate(request.getBirthDate());
+        user.setGender(request.getGender());
+
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+
     }
 
 }
