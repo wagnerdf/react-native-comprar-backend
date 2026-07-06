@@ -2,65 +2,37 @@ package com.wagnerdf.comprar.enums;
 
 import java.util.Set;
 
+import com.wagnerdf.comprar.security.permissions.PermissionGroups;
+
 public enum Role {
 
-    USER(Set.of(
-    		Permission.READ_PROFILE,
-            Permission.UPDATE_USER,
-            Permission.DELETE_USER
-    )),
-    
-    EMPLOYEE(Set.of(
+	USER(
+		    PermissionGroups.merge(
+		        PermissionGroups.PROFILE,
+		        PermissionGroups.USER_SELF
+		    )
+		),
 
-            Permission.READ_PROFILE,
+		EMPLOYEE(
+		    PermissionGroups.merge(
+		        PermissionGroups.PROFILE,
+		        PermissionGroups.CATEGORY_FULL,
+		        PermissionGroups.PRODUCT_FULL,
+		        PermissionGroups.ORDER_FULL,
+		        PermissionGroups.EMPLOYEE_SELF
+		    )
+		),
 
-            Permission.READ_CATEGORY,
-            Permission.CREATE_CATEGORY,
-            Permission.UPDATE_CATEGORY,
-            Permission.DELETE_CATEGORY,
-            Permission.REACTIVATE_CATEGORY,
-
-            Permission.READ_PRODUCT,
-            Permission.CREATE_PRODUCT,
-            Permission.UPDATE_PRODUCT,
-            Permission.DELETE_PRODUCT,
-            Permission.REACTIVATE_PRODUCT,
-
-            Permission.READ_ORDER,
-            Permission.UPDATE_ORDER,
-            Permission.UPDATE_USER
-
-    )),
-
-    ADMIN(Set.of(
-    		Permission.READ_PROFILE,
-
-            Permission.CREATE_USER,
-            Permission.READ_USER,
-            Permission.UPDATE_USER,
-            Permission.DELETE_USER,
-
-            Permission.CREATE_CATEGORY,
-            Permission.READ_CATEGORY,
-            Permission.UPDATE_CATEGORY,
-            Permission.DELETE_CATEGORY,
-            Permission.REACTIVATE_CATEGORY,
-
-            Permission.CREATE_PRODUCT,
-            Permission.READ_PRODUCT,
-            Permission.UPDATE_PRODUCT,
-            Permission.DELETE_PRODUCT,
-            Permission.REACTIVATE_PRODUCT,
-
-            Permission.READ_ORDER,
-            Permission.UPDATE_ORDER,
-            
-            Permission.CREATE_EMPLOYEE,
-            Permission.READ_EMPLOYEE,
-            Permission.UPDATE_EMPLOYEE,
-            Permission.DELETE_EMPLOYEE,
-            Permission.REACTIVATE_EMPLOYEE
-    ));
+		ADMIN(
+		    PermissionGroups.merge(
+		        PermissionGroups.PROFILE,
+		        PermissionGroups.USER_FULL,
+		        PermissionGroups.CATEGORY_FULL,
+		        PermissionGroups.PRODUCT_FULL,
+		        PermissionGroups.ORDER_FULL,
+		        PermissionGroups.EMPLOYEE_FULL
+		    )
+		);
 
     private final Set<Permission> permissions;
 
