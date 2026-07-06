@@ -210,5 +210,39 @@ public class EmployeeService {
         userRepository.save(user);
 
     }
+    
+    @Transactional
+    public void reactivateEmployee(String id) {
+
+        // =========================
+        // BUSCA USER
+        // =========================
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new EmployeeNotFoundException("Funcionário não encontrado"));
+
+        // =========================
+        // BUSCA AUTH
+        // =========================
+        Auth auth = authRepository.findByUser(user)
+                .orElseThrow(() ->
+                        new EmployeeNotFoundException("Funcionário não encontrado"));
+
+        // =========================
+        // VALIDA ROLE
+        // =========================
+        if (auth.getRole() != Role.EMPLOYEE) {
+            throw new EmployeeNotFoundException("Funcionário não encontrado");
+        }
+
+        // =========================
+        // REATIVA
+        // =========================
+        user.setActive(true);
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+
+    }
 
 }
