@@ -2,10 +2,13 @@ package com.wagnerdf.comprar.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wagnerdf.comprar.dto.request.CreateProductRequest;
+import com.wagnerdf.comprar.dto.response.ProductListResponse;
 import com.wagnerdf.comprar.entity.Category;
 import com.wagnerdf.comprar.entity.Product;
 import com.wagnerdf.comprar.exception.BusinessException;
@@ -67,6 +70,43 @@ public class ProductService {
         auditService.log(
                 authenticatedUserService.getCurrentUsername(),
                 "CREATE_PRODUCT"
+        );
+
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<ProductListResponse> findAll(
+            Pageable pageable,
+            String name
+    ) {
+
+        Page<Product> page;
+
+        if (name != null && !name.isBlank()) {
+
+            page = productRepository.findByActiveTrueAndNameContainingIgnoreCase(
+                    name,
+                    pageable
+            );
+
+        } else {
+
+            page = productRepository.findByActiveTrue(pageable);
+
+        }
+
+        return page.map(product ->
+
+                ProductListResponse.builder()
+                        .id(product.getId())
+                        .name(product.getName())
+                        .sku(product.getSku())
+                        .price(product.getPrice())
+                        .stock(product.getStock())
+                        .active(product.getActive())
+                        .category(product.getCategory().getName())
+                        .build()
+
         );
 
     }
