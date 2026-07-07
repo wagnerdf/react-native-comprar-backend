@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.wagnerdf.comprar.dto.request.CreateProductRequest;
+import com.wagnerdf.comprar.dto.request.UpdateProductRequest;
 import com.wagnerdf.comprar.dto.response.ProductDetailResponse;
 import com.wagnerdf.comprar.dto.response.ProductListResponse;
 import com.wagnerdf.comprar.service.ProductService;
@@ -62,6 +63,24 @@ public class ProductController {
         return ResponseEntity.ok(
                 productService.findById(id)
         );
+
+    }
+    
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('UPDATE_PRODUCT')")
+    public ResponseEntity<Void> update(
+
+            @PathVariable String id,
+
+            @Valid
+            @RequestBody
+            UpdateProductRequest request
+
+    ) {
+
+        productService.updateProduct(id, request);
+
+        return ResponseEntity.ok().build();
 
     }
 

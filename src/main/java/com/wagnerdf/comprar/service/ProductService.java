@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wagnerdf.comprar.dto.request.CreateProductRequest;
+import com.wagnerdf.comprar.dto.request.UpdateProductRequest;
 import com.wagnerdf.comprar.dto.response.ProductDetailResponse;
 import com.wagnerdf.comprar.dto.response.ProductListResponse;
 import com.wagnerdf.comprar.entity.Category;
@@ -135,6 +136,64 @@ public class ProductService {
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
+
+    }
+    
+    @Transactional
+    public void updateProduct(
+            String id,
+            UpdateProductRequest request
+    ) {
+
+        // =========================
+        // PRODUCT
+        // =========================
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Produto não encontrado."));
+
+        // =========================
+        // SKU
+        // =========================
+        productRepository.findBySku(request.getSku())
+                .ifPresent(existing -> {
+
+                    if (!existing.getId().equals(product.getId())) {
+                        throw new BusinessException("SKU já cadastrado.");
+                    }
+
+                });
+
+        // =========================
+        // CATEGORY
+        // =========================
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() ->
+                        new CategoryNotFoundException("Categoria não encontrada."));
+
+        // =========================
+        // UPDATE
+        // =========================
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setSku(request.getSku());
+        product.setBarcode(request.getBarcode());
+        product.setPrice(request.getPrice());
+        product.setStock(request.getStock());
+        product.setMinimumStock(request.getMinimumStock());
+        product.setCategory(category);
+
+        product.setUpdatedAt(LocalDateTime.now());
+
+        productRepository.save(product);
+
+        // =========================
+        // AUDITORIA
+        // =========================
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "UPDATE_PRODUCT"
+        );
 
     }
 
