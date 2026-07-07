@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.wagnerdf.comprar.dto.request.CreateProductRequest;
+import com.wagnerdf.comprar.dto.response.ProductDetailResponse;
 import com.wagnerdf.comprar.dto.response.ProductListResponse;
 import com.wagnerdf.comprar.service.ProductService;
 
@@ -48,6 +49,18 @@ public class ProductController {
 
         return ResponseEntity.ok(
                 productService.findAll(pageable, name)
+        );
+
+    }
+    
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('READ_PRODUCT')")
+    public ResponseEntity<ProductDetailResponse> findById(
+            @PathVariable String id
+    ) {
+
+        return ResponseEntity.ok(
+                productService.findById(id)
         );
 
     }

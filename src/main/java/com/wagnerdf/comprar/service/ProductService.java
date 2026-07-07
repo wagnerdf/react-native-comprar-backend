@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wagnerdf.comprar.dto.request.CreateProductRequest;
+import com.wagnerdf.comprar.dto.response.ProductDetailResponse;
 import com.wagnerdf.comprar.dto.response.ProductListResponse;
 import com.wagnerdf.comprar.entity.Category;
 import com.wagnerdf.comprar.entity.Product;
 import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.exception.CategoryNotFoundException;
+import com.wagnerdf.comprar.exception.ProductNotFoundException;
 import com.wagnerdf.comprar.mapper.ProductMapper;
 import com.wagnerdf.comprar.repository.CategoryRepository;
 import com.wagnerdf.comprar.repository.ProductRepository;
@@ -108,6 +110,31 @@ public class ProductService {
                         .build()
 
         );
+
+    }
+    
+    @Transactional(readOnly = true)
+    public ProductDetailResponse findById(String id) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Produto não encontrado."));
+
+        return ProductDetailResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .sku(product.getSku())
+                .barcode(product.getBarcode())
+                .price(product.getPrice())
+                .stock(product.getStock())
+                .minimumStock(product.getMinimumStock())
+                .active(product.getActive())
+                .categoryId(product.getCategory().getId())
+                .categoryName(product.getCategory().getName())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
+                .build();
 
     }
 
