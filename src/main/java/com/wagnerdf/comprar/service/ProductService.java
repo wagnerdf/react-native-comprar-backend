@@ -210,6 +210,9 @@ public class ProductService {
         // =========================
         // SOFT DELETE
         // =========================
+        if (Boolean.FALSE.equals(product.getActive())) {
+            throw new BusinessException("Produto já está inativo.");
+        }
         product.setActive(false);
         product.setUpdatedAt(LocalDateTime.now());
 
@@ -221,6 +224,37 @@ public class ProductService {
         auditService.log(
                 authenticatedUserService.getCurrentUsername(),
                 "DELETE_PRODUCT"
+        );
+
+    }
+    
+    @Transactional
+    public void reactivateProduct(String id) {
+
+        // =========================
+        // PRODUCT
+        // =========================
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Produto não encontrado."));
+
+        // =========================
+        // REACTIVATE
+        // =========================
+        if (Boolean.TRUE.equals(product.getActive())) {
+            throw new BusinessException("Produto já está ativo.");
+        }
+        product.setActive(true);
+        product.setUpdatedAt(LocalDateTime.now());
+
+        productRepository.save(product);
+
+        // =========================
+        // AUDITORIA
+        // =========================
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "REACTIVATE_PRODUCT"
         );
 
     }

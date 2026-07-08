@@ -95,5 +95,17 @@ public class ProductController {
         return ResponseEntity.noContent().build();
 
     }
+    
+    @PatchMapping("/{id}/reactivate")
+    @PreAuthorize("hasAuthority('REACTIVATE_PRODUCT')")
+    public ResponseEntity<Void> reactivate(
+            @PathVariable String id
+    ) {
+
+        productService.reactivateProduct(id);
+
+        return ResponseEntity.ok().build();
+
+    }
 
 }
