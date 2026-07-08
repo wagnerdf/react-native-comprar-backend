@@ -196,5 +196,33 @@ public class ProductService {
         );
 
     }
+    
+    @Transactional
+    public void deleteProduct(String id) {
+
+        // =========================
+        // PRODUCT
+        // =========================
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Produto não encontrado."));
+
+        // =========================
+        // SOFT DELETE
+        // =========================
+        product.setActive(false);
+        product.setUpdatedAt(LocalDateTime.now());
+
+        productRepository.save(product);
+
+        // =========================
+        // AUDITORIA
+        // =========================
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "DELETE_PRODUCT"
+        );
+
+    }
 
 }

@@ -83,5 +83,17 @@ public class ProductController {
         return ResponseEntity.ok().build();
 
     }
+    
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('DELETE_PRODUCT')")
+    public ResponseEntity<Void> delete(
+            @PathVariable String id
+    ) {
+
+        productService.deleteProduct(id);
+
+        return ResponseEntity.noContent().build();
+
+    }
 
 }
