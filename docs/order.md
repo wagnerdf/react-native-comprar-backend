@@ -14,7 +14,7 @@ O gerenciamento de pedidos pertence ao Backoffice da aplicação.
 
 | Operação | ADMIN | EMPLOYEE | USER |
 |----------|:-----:|:--------:|:----:|
-| Criar Pedido | ✅ | ✅ | ❌ |
+| Criar Pedido | ❌ | ❌ | ✅ |
 | Listar Próprios Pedidos | ❌ | ❌ | ✅ |
 | Consultar Próprio Pedido | ❌ | ❌ | ✅ |
 | Listar Todos os Pedidos | ✅ | ✅ | ❌ |
@@ -93,7 +93,6 @@ CANCELLED
 - O valor total será calculado automaticamente.
 - O número do pedido será gerado automaticamente.
 - Registrar auditoria (`CREATE_ORDER`).
-- Associa automaticamente o usuário autenticado ao pedido.
 
 ---
 
@@ -165,7 +164,6 @@ Ao cancelar:
 
 ```
 POST /orders
-**Status:** ✅ Implementado
 ```
 
 ---
@@ -220,9 +218,7 @@ Responsável por:
 
 - validar existência;
 - validar estoque;
-- validar produto ativo;
-- obter preço;
-- calcular subtotal.
+- obter preço.
 
 ---
 
@@ -231,7 +227,6 @@ Responsável por:
 Responsável por:
 
 - identificar o comprador.
-- recuperar usuário autenticado via JWT.
 
 ---
 
@@ -275,7 +270,7 @@ Os mapeamentos entre Entity e DTO serão realizados pelo **OrderMapper**.
 
 | Status | Funcionalidade |
 |:------:|----------------|
-| ✅ | Cadastro de pedido |
+| ⏳ | Cadastro de pedido |
 | ⏳ | Listagem paginada |
 | ⏳ | Consulta por ID |
 | ⏳ | Atualização de status |
