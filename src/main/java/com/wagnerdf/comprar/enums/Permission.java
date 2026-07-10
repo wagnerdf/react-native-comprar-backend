@@ -38,6 +38,7 @@ public enum Permission {
     // =========================
     READ_ORDER,
     UPDATE_ORDER,
+    CREATE_ORDER,
     
     // =========================
     // EMPLOYEE

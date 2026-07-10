@@ -59,7 +59,8 @@ public final class PermissionGroups {
     public static final PermissionGroup ORDER_FULL =
             new PermissionGroup(Set.of(
                     Permission.READ_ORDER,
-                    Permission.UPDATE_ORDER
+                    Permission.UPDATE_ORDER,
+                    Permission.CREATE_ORDER
             ));
 
     // =========================
