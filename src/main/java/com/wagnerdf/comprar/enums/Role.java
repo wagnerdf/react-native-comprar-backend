@@ -9,6 +9,7 @@ public enum Role {
 	USER(
 		    PermissionGroups.merge(
 		        PermissionGroups.PROFILE,
+		        PermissionGroups.ORDER_FULL,
 		        PermissionGroups.USER_SELF
 		    )
 		),
