@@ -1,6 +1,7 @@
 package com.wagnerdf.comprar.dto.response;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import com.wagnerdf.comprar.enums.OrderStatus;
 
@@ -18,5 +19,7 @@ public class OrderListResponse {
     private OrderStatus status;
 
     private BigDecimal total;
+    
+    private LocalDateTime createdAt;
 
 }

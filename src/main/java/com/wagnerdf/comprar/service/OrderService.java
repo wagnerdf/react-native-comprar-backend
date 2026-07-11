@@ -4,10 +4,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.wagnerdf.comprar.dto.request.CreateOrderItemRequest;
 import com.wagnerdf.comprar.dto.request.CreateOrderRequest;
+import com.wagnerdf.comprar.dto.response.OrderListResponse;
 import com.wagnerdf.comprar.dto.response.OrderResponse;
 import com.wagnerdf.comprar.entity.Order;
 import com.wagnerdf.comprar.entity.OrderItem;
@@ -131,6 +138,51 @@ public class OrderService {
     private String generateOrderNumber() {
 
         return "ORD-" + System.currentTimeMillis();
+
+    }
+    
+    public Page<OrderListResponse> getOrders(
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("createdAt").descending()
+        );
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAdmin =
+                authentication.getAuthorities()
+                        .stream()
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean isEmployee =
+                authentication.getAuthorities()
+                        .stream()
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"));
+
+        Page<Order> orders;
+
+        if (isAdmin || isEmployee) {
+
+            orders = orderRepository.findAll(pageable);
+
+        } else {
+
+            User user = authenticatedUserService.getCurrentUser();
+
+            orders = orderRepository.findAllByUserId(
+                    user.getId(),
+                    pageable
+            );
+
+        }
+
+        return orders.map(OrderMapper::toListResponse);
 
     }
 

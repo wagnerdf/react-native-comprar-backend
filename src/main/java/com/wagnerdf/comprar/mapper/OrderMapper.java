@@ -32,6 +32,7 @@ public class OrderMapper {
                 .orderNumber(order.getOrderNumber())
                 .status(order.getStatus())
                 .total(order.getTotal())
+                .createdAt(order.getCreatedAt())
                 .build();
 
     }
