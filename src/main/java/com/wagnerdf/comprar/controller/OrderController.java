@@ -180,5 +180,17 @@ public class OrderController {
         return ResponseEntity.noContent().build();
 
     }
+    
+    @PatchMapping("/{id}/cancel")
+    @PreAuthorize("hasAuthority('READ_ORDER')")
+    public ResponseEntity<Void> cancelOrder(
+            @PathVariable String id
+    ) {
+
+        orderService.cancelOrder(id);
+
+        return ResponseEntity.noContent().build();
+
+    }
 
 }

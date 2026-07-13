@@ -303,5 +303,51 @@ public class OrderService {
         }
 
     }
+    
+    public void cancelOrder(String id) {
+
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() ->
+                        new OrderNotFoundException("Pedido não encontrado."));
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean isEmployee = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"));
+
+        if (!isAdmin && !isEmployee) {
+
+            User user = authenticatedUserService.getCurrentUser();
+
+            if (!order.getUser().getId().equals(user.getId())) {
+
+                throw new ForbiddenException(
+                        "Você não possui permissão para cancelar este pedido."
+                );
+
+            }
+
+        }
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+
+            throw new BusinessException(
+                    "Somente pedidos com status PENDING podem ser cancelados."
+            );
+
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        order.setUpdatedAt(LocalDateTime.now());
+
+        orderRepository.save(order);
+
+    }
 
 }
