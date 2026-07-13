@@ -428,6 +428,28 @@ public class GlobalExceptionHandler {
 
     }
     
+    /**
+     * ==========================================================
+     * ORDER NOT FOUND
+     * ==========================================================
+     *
+     * Trata exceções quando um pedido não é encontrado.
+     *
+     * Retorno:
+     *
+     * HTTP 404 - NOT FOUND
+     *
+     * Exemplo:
+     *
+     * {
+     *   "timestamp": "...",
+     *   "status":404,
+     *   "error":"Not Found",
+     *   "message":"Pedido não encontrado.",
+     *   "path":"/orders/{id}"
+     * }
+     *
+     */
     @ExceptionHandler(OrderNotFoundException.class)
     public ResponseEntity<ApiError> handleOrderNotFound(
             OrderNotFoundException ex,

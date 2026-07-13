@@ -113,6 +113,45 @@ public class OrderController {
 
     }
     
+    /**
+     * ==========================================================
+     * CONSULTAR PEDIDO POR ID
+     * ==========================================================
+     *
+     * Localiza um pedido pelo seu identificador.
+     *
+     * Regras de acesso:
+     *
+     * ADMIN
+     *      Pode consultar qualquer pedido.
+     *
+     * EMPLOYEE
+     *      Pode consultar qualquer pedido.
+     *
+     * USER
+     *      Pode consultar apenas pedidos de sua propriedade.
+     *
+     * Exceções:
+     *
+     * OrderNotFoundException
+     *      Quando o pedido não existir.
+     *
+     * ForbiddenException
+     *      Quando um usuário tentar acessar pedido de outro usuário.
+     *
+     * Fluxo:
+     *
+     * Buscar pedido
+     *      ↓
+     * Pedido existe?
+     *      ↓
+     * Validar permissões
+     *      ↓
+     * Converter para DTO
+     *      ↓
+     * Retornar resposta
+     *
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('READ_ORDER')")
     public OrderDetailResponse getOrderById(
