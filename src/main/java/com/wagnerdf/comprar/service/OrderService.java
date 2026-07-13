@@ -1,6 +1,7 @@
 package com.wagnerdf.comprar.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.wagnerdf.comprar.dto.request.CreateOrderItemRequest;
 import com.wagnerdf.comprar.dto.request.CreateOrderRequest;
+import com.wagnerdf.comprar.dto.request.UpdateOrderStatusRequest;
 import com.wagnerdf.comprar.dto.response.OrderDetailResponse;
 import com.wagnerdf.comprar.dto.response.OrderListResponse;
 import com.wagnerdf.comprar.dto.response.OrderResponse;
@@ -221,6 +223,84 @@ public class OrderService {
         }
 
         return OrderMapper.toDetailResponse(order);
+
+    }
+    
+    public void updateOrderStatus(
+            String id,
+            UpdateOrderStatusRequest request
+    ) {
+
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() ->
+                        new OrderNotFoundException("Pedido não encontrado."));
+
+        validateStatusTransition(
+                order.getStatus(),
+                request.getStatus()
+        );
+
+        order.setStatus(request.getStatus());
+        order.setUpdatedAt(LocalDateTime.now());
+
+        orderRepository.save(order);
+
+    }
+    
+    private void validateStatusTransition(
+            OrderStatus currentStatus,
+            OrderStatus newStatus
+    ) {
+
+        switch (currentStatus) {
+
+            case PENDING -> {
+
+                if (newStatus != OrderStatus.PROCESSING) {
+                    throw new BusinessException(
+                            "Transição de status inválida."
+                    );
+                }
+
+            }
+
+            case PROCESSING -> {
+
+                if (newStatus != OrderStatus.PAID) {
+                    throw new BusinessException(
+                            "Transição de status inválida."
+                    );
+                }
+
+            }
+
+            case PAID -> {
+
+                if (newStatus != OrderStatus.SHIPPED) {
+                    throw new BusinessException(
+                            "Transição de status inválida."
+                    );
+                }
+
+            }
+
+            case SHIPPED -> {
+
+                if (newStatus != OrderStatus.DELIVERED) {
+                    throw new BusinessException(
+                            "Transição de status inválida."
+                    );
+                }
+
+            }
+
+            case DELIVERED, CANCELLED ->
+
+                    throw new BusinessException(
+                            "O pedido não pode mais ter seu status alterado."
+                    );
+
+        }
 
     }
 

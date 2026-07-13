@@ -4,8 +4,12 @@ import com.wagnerdf.comprar.enums.OrderStatus;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
+@Getter
+@Setter
 public class UpdateOrderStatusRequest {
 
     @NotNull(message = "Status é obrigatório")
