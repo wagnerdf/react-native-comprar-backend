@@ -164,6 +164,53 @@ public class OrderController {
 
     }
     
+    /**
+     * ==========================================================
+     * ATUALIZAR STATUS DO PEDIDO
+     * ==========================================================
+     *
+     * Atualiza o status de um pedido respeitando o fluxo
+     * de transição definido pela regra de negócio.
+     *
+     * Regras de acesso:
+     *
+     * ADMIN
+     *      Pode atualizar qualquer pedido.
+     *
+     * EMPLOYEE
+     *      Pode atualizar qualquer pedido.
+     *
+     * USER
+     *      Não possui permissão para alterar status.
+     *
+     * Fluxo permitido:
+     *
+     * PENDING
+     *      ↓
+     * PROCESSING
+     *      ↓
+     * PAID
+     *      ↓
+     * SHIPPED
+     *      ↓
+     * DELIVERED
+     *
+     * Não é permitido:
+     *
+     * - retornar para um status anterior;
+     * - pular etapas;
+     * - alterar pedidos CANCELLED;
+     * - alterar pedidos DELIVERED.
+     *
+     * Exceções:
+     *
+     * OrderNotFoundException
+     *      Pedido inexistente.
+     *
+     * BusinessException
+     *      Transição inválida.
+     *
+     */
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN') or hasRole('EMPLOYEE')")
     public ResponseEntity<Void> updateOrderStatus(
@@ -181,6 +228,53 @@ public class OrderController {
 
     }
     
+    /**
+     * ==========================================================
+     * CANCELAR PEDIDO
+     * ==========================================================
+     *
+     * Cancela um pedido alterando seu status
+     * para CANCELLED.
+     *
+     * Regras de acesso:
+     *
+     * ADMIN
+     *      Pode cancelar qualquer pedido.
+     *
+     * EMPLOYEE
+     *      Pode cancelar qualquer pedido.
+     *
+     * USER
+     *      Pode cancelar apenas seus próprios pedidos.
+     *
+     * Regras de negócio:
+     *
+     * Apenas pedidos com status PENDING
+     * podem ser cancelados.
+     *
+     * Após o cancelamento:
+     *
+     * status = CANCELLED
+     *
+     * Implementações futuras:
+     *
+     * - devolver estoque;
+     * - cancelar pagamento;
+     * - registrar auditoria.
+     *
+     * Exceções:
+     *
+     * OrderNotFoundException
+     *      Pedido inexistente.
+     *
+     * ForbiddenException
+     *      Usuário tentando cancelar pedido
+     *      de outro usuário.
+     *
+     * BusinessException
+     *      Pedido não está em PENDING.
+     *
+     */
     @PatchMapping("/{id}/cancel")
     @PreAuthorize("hasAuthority('READ_ORDER')")
     public ResponseEntity<Void> cancelOrder(

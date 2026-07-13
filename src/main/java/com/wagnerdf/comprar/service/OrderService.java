@@ -247,6 +247,36 @@ public class OrderService {
 
     }
     
+    /**
+     * ==========================================================
+     * VALIDAR TRANSIÇÃO DE STATUS
+     * ==========================================================
+     *
+     * Valida se a mudança entre o status atual
+     * e o novo status é permitida.
+     *
+     * Fluxo permitido:
+     *
+     * PENDING → PROCESSING
+     *
+     * PROCESSING → PAID
+     *
+     * PAID → SHIPPED
+     *
+     * SHIPPED → DELIVERED
+     *
+     * Estados finais:
+     *
+     * DELIVERED
+     *
+     * CANCELLED
+     *
+     * Não permitem novas alterações.
+     *
+     * Lança BusinessException quando
+     * a transição não for permitida.
+     *
+     */
     private void validateStatusTransition(
             OrderStatus currentStatus,
             OrderStatus newStatus
