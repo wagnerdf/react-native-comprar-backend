@@ -85,15 +85,15 @@ CANCELLED
 
 ## Cadastro
 
-- Usuário autenticado.
-- Pedido deve possuir pelo menos um item.
-- Produto deve existir.
-- Produto deve estar ativo.
-- Produto deve possuir estoque suficiente.
-- O valor total será calculado automaticamente.
-- O número do pedido será gerado automaticamente.
-- Registrar auditoria (`CREATE_ORDER`).
-- Associa automaticamente o usuário autenticado ao pedido.
+- ✅ Usuário autenticado.
+- ✅ Pedido deve possuir pelo menos um item.
+- ✅ Produto deve existir.
+- ✅ Produto deve estar ativo.
+- ✅ Produto deve possuir estoque suficiente.
+- ✅ O valor total será calculado automaticamente.
+- ✅ O número do pedido será gerado automaticamente.
+- ✅ Registrar auditoria (`CREATE_ORDER`).
+- ✅ Associa automaticamente o usuário autenticado ao pedido.
 
 ---
 
@@ -101,15 +101,15 @@ CANCELLED
 
 ### USER
 
-- Pode visualizar apenas seus próprios pedidos.
+- ✅ Pode visualizar apenas seus próprios pedidos.
 
 ### EMPLOYEE
 
-- Pode visualizar todos os pedidos.
+- ✅ Pode visualizar todos os pedidos.
 
 ### ADMIN
 
-- Pode visualizar todos os pedidos.
+- ✅ Pode visualizar todos os pedidos.
 
 ---
 
@@ -173,7 +173,10 @@ POST /orders
 ## Listar Pedidos
 
 ```
-GET /orders
+GET /orders 
+**Status:** ✅ Implementado
+- Paginação
+- Ordenação por data de criação (mais recentes primeiro)
 ```
 
 ---
@@ -182,6 +185,9 @@ GET /orders
 
 ```
 GET /orders/{id}
+**Status:** ✅ Implementado
+- USER visualiza apenas seus pedidos.
+- ADMIN e EMPLOYEE visualizam qualquer pedido.
 ```
 
 ---
@@ -190,6 +196,7 @@ GET /orders/{id}
 
 ```
 PATCH /orders/{id}/status
+⏳ Em desenvolvimento
 ```
 
 ---
@@ -198,6 +205,7 @@ PATCH /orders/{id}/status
 
 ```
 PATCH /orders/{id}/cancel
+⏳ Em desenvolvimento
 ```
 
 ---
@@ -269,6 +277,51 @@ Os mapeamentos entre Entity e DTO serão realizados pelo **OrderMapper**.
 
 ---
 
+# Fluxo Implementado
+
+```text
+POST /orders
+        ↓
+Validação do usuário autenticado
+        ↓
+Validação dos produtos
+        ↓
+Validação do estoque
+        ↓
+Criação dos itens
+        ↓
+Cálculo do valor total
+        ↓
+Geração do número do pedido
+        ↓
+Persistência
+```
+
+```text
+GET /orders
+        ↓
+ADMIN / EMPLOYEE
+        ↓
+Lista todos os pedidos
+
+USER
+        ↓
+Lista apenas seus pedidos
+```
+
+```text
+GET /orders/{id}
+        ↓
+Pedido existe?
+        ↓
+Validação de acesso
+        ↓
+Conversão para DTO
+        ↓
+Resposta
+```
+---
+
 # Roadmap do Módulo
 
 ## Funcionalidades
@@ -276,8 +329,8 @@ Os mapeamentos entre Entity e DTO serão realizados pelo **OrderMapper**.
 | Status | Funcionalidade |
 |:------:|----------------|
 | ✅ | Cadastro de pedido |
-| ⏳ | Listagem paginada |
-| ⏳ | Consulta por ID |
+| ✅ | Listagem paginada |
+| ✅ | Consulta por ID |
 | ⏳ | Atualização de status |
 | ⏳ | Cancelamento |
 
