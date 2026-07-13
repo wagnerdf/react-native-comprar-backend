@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wagnerdf.comprar.dto.request.CreateOrderRequest;
+import com.wagnerdf.comprar.dto.response.OrderDetailResponse;
 import com.wagnerdf.comprar.dto.response.OrderListResponse;
 import com.wagnerdf.comprar.dto.response.OrderResponse;
 import com.wagnerdf.comprar.service.OrderService;
@@ -108,6 +110,16 @@ public class OrderController {
     ) {
 
         return orderService.getOrders(page, size);
+
+    }
+    
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('READ_ORDER')")
+    public OrderDetailResponse getOrderById(
+            @PathVariable String id
+    ) {
+
+        return orderService.getOrderById(id);
 
     }
 

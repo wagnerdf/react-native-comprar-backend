@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.wagnerdf.comprar.dto.request.CreateOrderItemRequest;
 import com.wagnerdf.comprar.dto.request.CreateOrderRequest;
+import com.wagnerdf.comprar.dto.response.OrderDetailResponse;
 import com.wagnerdf.comprar.dto.response.OrderListResponse;
 import com.wagnerdf.comprar.dto.response.OrderResponse;
 import com.wagnerdf.comprar.entity.Order;
@@ -22,6 +23,8 @@ import com.wagnerdf.comprar.entity.Product;
 import com.wagnerdf.comprar.entity.User;
 import com.wagnerdf.comprar.enums.OrderStatus;
 import com.wagnerdf.comprar.exception.BusinessException;
+import com.wagnerdf.comprar.exception.ForbiddenException;
+import com.wagnerdf.comprar.exception.OrderNotFoundException;
 import com.wagnerdf.comprar.exception.ProductNotFoundException;
 import com.wagnerdf.comprar.mapper.OrderMapper;
 import com.wagnerdf.comprar.repository.OrderRepository;
@@ -183,6 +186,41 @@ public class OrderService {
         }
 
         return orders.map(OrderMapper::toListResponse);
+
+    }
+    
+    public OrderDetailResponse getOrderById(String id) {
+
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() ->
+                        new OrderNotFoundException("Pedido não encontrado."));
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean isEmployee = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"));
+
+        if (!isAdmin && !isEmployee) {
+
+            User user = authenticatedUserService.getCurrentUser();
+
+            if (!order.getUser().getId().equals(user.getId())) {
+
+                throw new ForbiddenException(
+                        "Você não possui permissão para visualizar este pedido."
+                );
+
+            }
+
+        }
+
+        return OrderMapper.toDetailResponse(order);
 
     }
 
