@@ -7,14 +7,13 @@ Responsável pelo gerenciamento completo dos pedidos realizados pelos clientes d
 O módulo controla todo o ciclo de vida de um pedido, desde sua criação até sua conclusão ou cancelamento, integrando produtos, estoque, pagamentos e auditoria.
 
 ---
-
 # Segurança
 
 O gerenciamento de pedidos pertence ao Backoffice da aplicação.
 
 | Operação | ADMIN | EMPLOYEE | USER |
 |----------|:-----:|:--------:|:----:|
-| Criar Pedido | ✅ | ✅ | ✅ |
+| Criar Pedido | ✅ | ❌ | ✅ |
 | Listar Próprios Pedidos | ❌ | ❌ | ✅ |
 | Consultar Próprio Pedido | ❌ | ❌ | ✅ |
 | Listar Todos os Pedidos | ✅ | ✅ | ❌ |
@@ -131,7 +130,12 @@ SHIPPED
 DELIVERED
 ```
 
-Não será permitido retornar para um status anterior.
+Não será permitido:
+
+- retornar para um status anterior;
+- pular etapas do fluxo;
+- alterar pedidos CANCELLED;
+- alterar pedidos DELIVERED.
 
 ---
 
@@ -145,11 +149,11 @@ Pode cancelar apenas pedidos com status:
 
 ### EMPLOYEE
 
-Pode cancelar conforme regras de negócio.
+Pode cancelar qualquer pedido com status PENDING.
 
 ### ADMIN
 
-Pode cancelar qualquer pedido permitido pelas regras do sistema.
+Pode cancelar qualquer pedido com status PENDING.
 
 Ao cancelar:
 
@@ -188,6 +192,30 @@ GET /orders/{id}
 **Status:** ✅ Implementado
 - USER visualiza apenas seus pedidos.
 - ADMIN e EMPLOYEE visualizam qualquer pedido.
+```text
+PATCH /orders/{id}/status
+        ↓
+Localiza pedido
+        ↓
+Valida transição
+        ↓
+Atualiza status
+        ↓
+Persistência
+```
+
+```text
+PATCH /orders/{id}/cancel
+        ↓
+Localiza pedido
+        ↓
+Valida permissão
+        ↓
+Status = PENDING?
+        ↓
+Altera para CANCELLED
+        ↓
+Persistência
 ```
 
 ---
@@ -196,7 +224,11 @@ GET /orders/{id}
 
 ```
 PATCH /orders/{id}/status
-⏳ Em desenvolvimento
+**Status:** ✅ Implementado
+- Apenas ADMIN e EMPLOYEE.
+- Fluxo sequencial obrigatório.
+- Não permite retornar etapas.
+- Não permite alterar pedidos CANCELLED ou DELIVERED.
 ```
 
 ---
@@ -205,18 +237,22 @@ PATCH /orders/{id}/status
 
 ```
 PATCH /orders/{id}/cancel
-⏳ Em desenvolvimento
+**Status:** ✅ Implementado
+
+- USER cancela apenas pedidos próprios.
+- Apenas pedidos com status PENDING.
+- ADMIN e EMPLOYEE podem cancelar qualquer pedido PENDING.
 ```
 
 ---
 
 # Auditoria
 
-Operações previstas
+Operações previstas (pendentes de implementação)
 
-- CREATE_ORDER
-- UPDATE_ORDER_STATUS
-- CANCEL_ORDER
+| ⏳ | - CREATE_ORDER
+| ⏳ | - UPDATE_ORDER_STATUS
+| ⏳ | - CANCEL_ORDER
 
 ---
 
@@ -331,8 +367,8 @@ Resposta
 | ✅ | Cadastro de pedido |
 | ✅ | Listagem paginada |
 | ✅ | Consulta por ID |
-| ⏳ | Atualização de status |
-| ⏳ | Cancelamento |
+| ✅ | Atualização de status |
+| ✅ | Cancelamento |
 
 ---
 
