@@ -31,7 +31,7 @@ public class OrderController {
 	private final OrderService orderService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_ORDER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<OrderResponse> create(
             @Valid @RequestBody CreateOrderRequest request) {
 
