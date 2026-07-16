@@ -42,6 +42,7 @@ public class OrderService {
 	private final ProductRepository productRepository;
 	private final AuthenticatedUserService authenticatedUserService;
 	private final StockMovementService stockMovementService;
+	private final OrderNumberService orderNumberService;
     
     public OrderResponse createOrder(CreateOrderRequest request) {
     	
@@ -76,7 +77,9 @@ public class OrderService {
     	 
     	 order.setStatus(OrderStatus.PENDING);
     	 
-    	 order.setOrderNumber(generateOrderNumber());
+    	 order.setOrderNumber(
+    		        orderNumberService.generate()
+    		);
     	 
     	 Order savedOrder = orderRepository.save(order);
     	 
@@ -142,12 +145,6 @@ public class OrderService {
         return items.stream()
                 .map(OrderItem::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-    }
-    
-    private String generateOrderNumber() {
-
-        return "ORD-" + System.currentTimeMillis();
 
     }
     
