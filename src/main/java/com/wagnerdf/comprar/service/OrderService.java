@@ -378,7 +378,8 @@ public class OrderService {
         }
 
         order.setStatus(OrderStatus.CANCELLED);
-        order.setUpdatedAt(LocalDateTime.now());
+        restoreStock(order.getItems());
+        orderRepository.save(order);
 
         orderRepository.save(order);
 
@@ -400,6 +401,24 @@ public class OrderService {
             	         .toList()
             	);
         }
+    }
+    
+    private void restoreStock(List<OrderItem> items) {
+
+        List<Product> products = new ArrayList<>();
+
+        for (OrderItem item : items) {
+
+            Product product = item.getProduct();
+
+            product.setStock(
+                    product.getStock() + item.getQuantity()
+            );
+
+            products.add(product);
+        }
+
+        productRepository.saveAll(products);
     }
 
 }
