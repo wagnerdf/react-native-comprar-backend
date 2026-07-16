@@ -386,7 +386,7 @@ Resposta
 
 | Status | Funcionalidade |
 |:------:|----------------|
-| ⏳ | Número sequencial do pedido |
+| ✅ | Número sequencial do pedido |
 | ⏳ | Cupons de desconto |
 | ⏳ | Frete |
 | ⏳ | Cálculo de impostos |
