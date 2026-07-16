@@ -41,6 +41,7 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
 	private final AuthenticatedUserService authenticatedUserService;
+	private final StockMovementService stockMovementService;
     
     public OrderResponse createOrder(CreateOrderRequest request) {
     	
@@ -81,7 +82,7 @@ public class OrderService {
     	 
     	 orderRepository.save(order);
 
-    	 decreaseStock(items);
+    	 decreaseStock(order, items);
 
     	 return OrderMapper.toResponse(savedOrder);
 
@@ -378,41 +379,59 @@ public class OrderService {
         }
 
         order.setStatus(OrderStatus.CANCELLED);
-        restoreStock(order.getItems());
+        restoreStock(order, order.getItems());
         orderRepository.save(order);
 
         orderRepository.save(order);
 
     }
     
-    private void decreaseStock(List<OrderItem> items) {
+    private void decreaseStock(Order order, List<OrderItem> items) {
 
-        for (OrderItem item : items) {
+        List<Product> products = new ArrayList<>();
+    	
+    	for (OrderItem item : items) {
 
             Product product = item.getProduct();
+            
+            Integer previousStock = product.getStock();
 
             product.setStock(
-                    product.getStock() - item.getQuantity()
+            		previousStock - item.getQuantity()
             );
 
-            productRepository.saveAll(
-            	    items.stream()
-            	         .map(OrderItem::getProduct)
-            	         .toList()
-            	);
+            stockMovementService.registerExit(
+                    product,
+                    item.getQuantity(),
+                    previousStock,
+                    order
+            );
+
+            products.add(product);
         }
+
+        productRepository.saveAll(products);
     }
     
-    private void restoreStock(List<OrderItem> items) {
+    private void restoreStock(Order order, List<OrderItem> items) {
 
         List<Product> products = new ArrayList<>();
 
         for (OrderItem item : items) {
 
             Product product = item.getProduct();
+            
+            Integer previousStock = product.getStock();
 
             product.setStock(
-                    product.getStock() + item.getQuantity()
+                    previousStock + item.getQuantity()
+            );
+            
+            stockMovementService.registerEntry(
+                    product,
+                    item.getQuantity(),
+                    previousStock,
+                    order
             );
 
             products.add(product);
