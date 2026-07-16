@@ -78,6 +78,10 @@ public class OrderService {
     	 order.setOrderNumber(generateOrderNumber());
     	 
     	 Order savedOrder = orderRepository.save(order);
+    	 
+    	 orderRepository.save(order);
+
+    	 decreaseStock(items);
 
     	 return OrderMapper.toResponse(savedOrder);
 
@@ -378,6 +382,24 @@ public class OrderService {
 
         orderRepository.save(order);
 
+    }
+    
+    private void decreaseStock(List<OrderItem> items) {
+
+        for (OrderItem item : items) {
+
+            Product product = item.getProduct();
+
+            product.setStock(
+                    product.getStock() - item.getQuantity()
+            );
+
+            productRepository.saveAll(
+            	    items.stream()
+            	         .map(OrderItem::getProduct)
+            	         .toList()
+            	);
+        }
     }
 
 }
