@@ -376,9 +376,9 @@ Resposta
 
 | Status | Funcionalidade |
 |:------:|----------------|
-| ⏳ | Baixa automática de estoque |
-| ⏳ | Devolução automática em cancelamentos |
-| ⏳ | Histórico de movimentações |
+| ✅ | Baixa automática de estoque |
+| ✅ | Devolução automática em cancelamentos |
+| ✅ | Histórico de movimentações |
 
 ---
 
