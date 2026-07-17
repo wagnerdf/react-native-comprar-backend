@@ -1,10 +1,11 @@
 package com.wagnerdf.comprar.service;
 
-import java.time.Year;
+import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
+import com.wagnerdf.comprar.enums.State;
 import com.wagnerdf.comprar.repository.SequenceRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -15,22 +16,23 @@ public class OrderNumberService {
 
     private final SequenceRepository sequenceRepository;
 
-    public String generate() {
+    public String generateOrderNumber(State state) {
 
         Long sequence = sequenceRepository.nextOrderSequence();
 
-        int year = Year.now().getValue();
+        String year = String.valueOf(LocalDate.now().getYear());
+        
+        String uf = state.name();
 
         int random =
                 ThreadLocalRandom.current()
                         .nextInt(100, 1000);
 
-        return String.format(
-                "ORD-%d-%03d-%d",
-                year,
-                random,
-                sequence
-        );
+        return "ORD"
+        + year
+        + uf
+        + String.format("%03d", random)
+        + sequence;
     }
 
 }

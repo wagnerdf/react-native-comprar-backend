@@ -94,7 +94,9 @@ public class OrderService {
     	 order.setStatus(OrderStatus.PENDING);
     	 
     	 order.setOrderNumber(
-    		        orderNumberService.generate()
+    		        orderNumberService.generateOrderNumber(
+    		                address.getState()
+    		        )
     		);
     	 
     	 orderRepository.save(order);
