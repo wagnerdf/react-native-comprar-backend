@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -83,5 +84,12 @@ public class Order {
         this.updatedAt = LocalDateTime.now();
 
     }
+    
+    @OneToOne(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private DeliveryAddress deliveryAddress;
 
 }

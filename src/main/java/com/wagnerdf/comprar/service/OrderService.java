@@ -19,6 +19,8 @@ import com.wagnerdf.comprar.dto.request.UpdateOrderStatusRequest;
 import com.wagnerdf.comprar.dto.response.OrderDetailResponse;
 import com.wagnerdf.comprar.dto.response.OrderListResponse;
 import com.wagnerdf.comprar.dto.response.OrderResponse;
+import com.wagnerdf.comprar.entity.Address;
+import com.wagnerdf.comprar.entity.DeliveryAddress;
 import com.wagnerdf.comprar.entity.Order;
 import com.wagnerdf.comprar.entity.OrderItem;
 import com.wagnerdf.comprar.entity.Product;
@@ -29,6 +31,7 @@ import com.wagnerdf.comprar.exception.ForbiddenException;
 import com.wagnerdf.comprar.exception.OrderNotFoundException;
 import com.wagnerdf.comprar.exception.ProductNotFoundException;
 import com.wagnerdf.comprar.mapper.OrderMapper;
+import com.wagnerdf.comprar.repository.AddressRepository;
 import com.wagnerdf.comprar.repository.OrderRepository;
 import com.wagnerdf.comprar.repository.ProductRepository;
 
@@ -43,6 +46,7 @@ public class OrderService {
 	private final AuthenticatedUserService authenticatedUserService;
 	private final StockMovementService stockMovementService;
 	private final OrderNumberService orderNumberService;
+	private final AddressRepository addressRepository;
     
     public OrderResponse createOrder(CreateOrderRequest request) {
     	
@@ -50,6 +54,18 @@ public class OrderService {
                 .build();
     	
     	User user = authenticatedUserService.getCurrentUser();
+    	
+    	Address address = addressRepository.findById(request.getAddressId())
+    	        .orElseThrow(() ->
+    	                new BusinessException("Endereço não encontrado."));
+    	
+    	if (!address.getUser().getId().equals(user.getId())) {
+
+    	    throw new BusinessException(
+    	            "O endereço informado não pertence ao usuário."
+    	    );
+
+    	}
 
     	order.setUser(user);
 
@@ -81,13 +97,18 @@ public class OrderService {
     		        orderNumberService.generate()
     		);
     	 
-    	 Order savedOrder = orderRepository.save(order);
-    	 
     	 orderRepository.save(order);
 
     	 decreaseStock(order, items);
+    	 
+    	 DeliveryAddress deliveryAddress =
+    		        buildDeliveryAddress(order, address);
 
-    	 return OrderMapper.toResponse(savedOrder);
+    	order.setDeliveryAddress(deliveryAddress);
+    		
+    	Order savedOrder = orderRepository.save(order);
+
+    	return OrderMapper.toResponse(savedOrder);
 
     }
     
@@ -435,6 +456,25 @@ public class OrderService {
         }
 
         productRepository.saveAll(products);
+    }
+    
+    private DeliveryAddress buildDeliveryAddress(
+            Order order,
+            Address address) {
+
+        return DeliveryAddress.builder()
+                .order(order)
+                .recipientName(address.getRecipientName())
+                .zipCode(address.getZipCode())
+                .street(address.getStreet())
+                .number(address.getNumber())
+                .complement(address.getComplement())
+                .neighborhood(address.getNeighborhood())
+                .city(address.getCity())
+                .state(address.getState())
+                .reference(address.getReference())
+                .build();
+
     }
 
 }

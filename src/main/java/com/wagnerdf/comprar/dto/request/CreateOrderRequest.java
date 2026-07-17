@@ -12,5 +12,7 @@ public class CreateOrderRequest {
     @NotEmpty(message = "O pedido deve possuir pelo menos um item")
     @Valid
     private List<CreateOrderItemRequest> items;
+    
+    private String addressId;
 
 }
