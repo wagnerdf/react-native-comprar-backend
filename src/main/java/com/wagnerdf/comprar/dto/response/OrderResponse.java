@@ -1,6 +1,7 @@
 package com.wagnerdf.comprar.dto.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.wagnerdf.comprar.enums.OrderStatus;
 
@@ -18,5 +19,9 @@ public class OrderResponse {
     private OrderStatus status;
 
     private BigDecimal total;
+    
+    private List<OrderItemResponse> items;
+
+    private DeliveryAddressResponse deliveryAddress;
 
 }

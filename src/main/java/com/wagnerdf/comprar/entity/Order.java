@@ -88,7 +88,8 @@ public class Order {
     @OneToOne(
             mappedBy = "order",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     private DeliveryAddress deliveryAddress;
 
