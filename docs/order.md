@@ -54,6 +54,26 @@ Campos previstos
 
 ---
 
+## DeliveryAddress
+
+Snapshot do endereço utilizado no momento da compra.
+
+Campos previstos
+
+- id
+- order
+- recipientName
+- zipCode
+- street
+- number
+- complement
+- neighborhood
+- city
+- state
+- reference
+
+---
+
 # Status do Pedido
 
 Fluxo principal
@@ -93,6 +113,15 @@ CANCELLED
 - ✅ O número do pedido será gerado automaticamente.
 - ✅ Registrar auditoria (`CREATE_ORDER`).
 - ✅ Associa automaticamente o usuário autenticado ao pedido.
+- ✅ Valida o endereço de entrega informado.
+- ✅ O endereço deve pertencer ao usuário autenticado.
+- ✅ Cria um snapshot do endereço de entrega no momento da compra.
+- ✅ O número do pedido é composto por:
+  - Prefixo ORD
+  - Ano corrente
+  - UF do endereço de entrega
+  - 3 dígitos aleatórios
+  - Sequência do banco de dados
 
 ---
 
@@ -192,6 +221,7 @@ GET /orders/{id}
 **Status:** ✅ Implementado
 - USER visualiza apenas seus pedidos.
 - ADMIN e EMPLOYEE visualizam qualquer pedido.
+- Retorna também o snapshot do endereço de entrega.
 ```text
 PATCH /orders/{id}/status
         ↓
@@ -320,6 +350,8 @@ POST /orders
         ↓
 Validação do usuário autenticado
         ↓
+Validação do endereço de entrega
+        ↓
 Validação dos produtos
         ↓
 Validação do estoque
@@ -327,6 +359,8 @@ Validação do estoque
 Criação dos itens
         ↓
 Cálculo do valor total
+        ↓
+Criação do DeliveryAddress (snapshot)
         ↓
 Geração do número do pedido
         ↓
@@ -386,7 +420,7 @@ Resposta
 
 | Status | Funcionalidade |
 |:------:|----------------|
-| ✅ | Número sequencial do pedido |
+| ✅ | Número sequencial do pedido (ORD + Ano + UF + Aleatório + Sequência) |
 | ⏳ | Cupons de desconto |
 | ⏳ | Frete |
 | ⏳ | Cálculo de impostos |
@@ -410,7 +444,7 @@ Resposta
 
 | Status | Funcionalidade |
 |:------:|----------------|
-| ⏳ | Endereço de entrega |
+| ✅ | Endereço de entrega (snapshot do endereço utilizado na compra) |
 | ⏳ | Código de rastreio |
 | ⏳ | Transportadora |
 | ⏳ | Prazo de entrega |
