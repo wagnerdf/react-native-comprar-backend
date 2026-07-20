@@ -469,4 +469,33 @@ public class GlobalExceptionHandler {
                 .body(error);
 
     }
+    
+    /**
+     * 🚚 Trata transportadora não encontrada.
+     *
+     * Utilizado quando uma transportadora informada
+     * por ID não existe na base.
+     *
+     * Retorna:
+     * HTTP 404 - Not Found
+     */
+    @ExceptionHandler(CarrierNotFoundException.class)
+    public ResponseEntity<ApiError> handleCarrierNotFound(
+            CarrierNotFoundException ex,
+            HttpServletRequest request
+    ) {
+
+        ApiError error = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Not Found")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+
+    }
 }

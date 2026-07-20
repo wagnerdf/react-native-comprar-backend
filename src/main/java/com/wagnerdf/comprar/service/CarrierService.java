@@ -1,6 +1,7 @@
 package com.wagnerdf.comprar.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import com.wagnerdf.comprar.dto.request.CarrierRequest;
 import com.wagnerdf.comprar.dto.response.CarrierResponse;
 import com.wagnerdf.comprar.entity.Carrier;
 import com.wagnerdf.comprar.exception.BusinessException;
+import com.wagnerdf.comprar.exception.CarrierNotFoundException;
 import com.wagnerdf.comprar.mapper.CarrierMapper;
 import com.wagnerdf.comprar.repository.CarrierRepository;
 
@@ -40,6 +42,34 @@ public class CarrierService {
 
 	    return CarrierMapper.toResponse(
 	            carrierRepository.save(carrier));
+
+	}
+	
+	private Carrier findCarrier(String id) {
+
+	    return carrierRepository.findById(id)
+	            .orElseThrow(() ->
+	                    new CarrierNotFoundException(id));
+
+	}
+	
+	
+	
+	@Transactional(readOnly = true)
+	public List<CarrierResponse> findAll() {
+
+	    return carrierRepository.findAll()
+	            .stream()
+	            .map(CarrierMapper::toResponse)
+	            .toList();
+
+	}
+	
+	@Transactional(readOnly = true)
+	public CarrierResponse findById(String id) {
+
+	    return CarrierMapper.toResponse(
+	            findCarrier(id));
 
 	}
 
