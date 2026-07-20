@@ -22,16 +22,17 @@ public class CarrierService {
 	
 	@Transactional
 	public CarrierResponse create(CarrierRequest request) {
-
-	    carrierRepository.findByNameIgnoreCase(request.name())
+		
+		String carrierName = request.name().trim();
+	    carrierRepository.findByNameIgnoreCase(carrierName)
 	            .ifPresent(carrier -> {
 	                throw new BusinessException(
 	                        "Carrier already exists.");
 	            });
-
+	    
 	    Carrier carrier =
 	            Carrier.builder()
-	                    .name(request.name())
+	            		.name(carrierName)
 	                    .active(true)
 	                    .createdAt(LocalDateTime.now())
 	                    .updatedAt(LocalDateTime.now())
