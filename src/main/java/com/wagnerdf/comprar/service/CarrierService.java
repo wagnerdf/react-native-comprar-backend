@@ -72,5 +72,29 @@ public class CarrierService {
 	            findCarrier(id));
 
 	}
+	
+	@Transactional
+	public CarrierResponse update(
+	        String id,
+	        CarrierRequest request) {
+
+	    Carrier carrier = findCarrier(id);
+
+	    String carrierName = request.name().trim();
+
+	    carrierRepository.findByNameIgnoreCase(carrierName)
+	            .ifPresent(existing -> {
+	                if (!existing.getId().equals(id)) {
+	                    throw new BusinessException(
+	                            "Carrier already exists.");
+	                }
+	            });
+
+	    carrier.setName(carrierName);
+	    carrier.setUpdatedAt(LocalDateTime.now());
+
+	    return CarrierMapper.toResponse(
+	            carrierRepository.save(carrier));
+	}
 
 }
