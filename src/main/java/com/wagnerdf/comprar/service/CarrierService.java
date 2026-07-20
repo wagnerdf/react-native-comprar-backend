@@ -109,5 +109,19 @@ public class CarrierService {
 	    carrierRepository.save(carrier);
 
 	}
+	
+	@Transactional
+	public CarrierResponse reactivate(String id) {
+
+	    Carrier carrier =
+	            findCarrier(id);
+
+	    carrier.setActive(true);
+	    carrier.setUpdatedAt(LocalDateTime.now());
+
+	    return CarrierMapper.toResponse(
+	            carrierRepository.save(carrier));
+
+	}
 
 }
