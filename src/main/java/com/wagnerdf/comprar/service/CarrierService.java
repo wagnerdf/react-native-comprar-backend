@@ -96,5 +96,18 @@ public class CarrierService {
 	    return CarrierMapper.toResponse(
 	            carrierRepository.save(carrier));
 	}
+	
+	@Transactional
+	public void delete(String id) {
+
+	    Carrier carrier =
+	            findCarrier(id);
+
+	    carrier.setActive(false);
+	    carrier.setUpdatedAt(LocalDateTime.now());
+
+	    carrierRepository.save(carrier);
+
+	}
 
 }
