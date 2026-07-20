@@ -460,3 +460,20 @@ Resposta
 | ⏳ | Clientes que mais compram |
 | ⏳ | Faturamento |
 | ⏳ | Ticket médio |
+---
+
+## Alteração de Pedido
+
+Permitida apenas enquanto o pedido estiver com order/status:
+
+- PENDING
+
+| Status | Funcionalidade |
+|:------:|----------------|
+| ⏳ | Adicionar produtos |
+| ⏳ | Alterar quantidades |
+| ⏳ | Alterar endereço de entrega |
+| ⏳ | Recalcular total |
+| ⏳ | Recalcular frete |
+| ⏳ | Recalcular impostos |
+| ⏳ | Atualizar estoque automaticamente |
