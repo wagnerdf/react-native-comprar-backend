@@ -10,5 +10,9 @@ public interface CarrierRepository
         extends JpaRepository<Carrier, String> {
 
     Optional<Carrier> findByName(String name);
+    
+    Optional<Carrier> findById(String id);
+    
+    Optional<Carrier> findByNameIgnoreCase(String name);
 
 }
