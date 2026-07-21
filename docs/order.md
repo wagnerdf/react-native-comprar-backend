@@ -309,6 +309,16 @@ Responsável por:
 
 ---
 
+## Carrier
+
+Responsável por:
+
+- manter o cadastro das transportadoras;
+- disponibilizar transportadoras ativas para o cálculo do frete;
+- servir como base para os serviços de entrega (ShippingOption).
+
+---
+
 ## Audit
 
 Responsável por:
@@ -421,6 +431,7 @@ Resposta
 | Status | Funcionalidade |
 |:------:|----------------|
 | ✅ | Número sequencial do pedido (ORD + Ano + UF + Aleatório + Sequência) |
+| ⏳ | Frete (infraestrutura iniciada com Carrier) |
 | ⏳ | Cupons de desconto |
 | ⏳ | Frete |
 | ⏳ | Cálculo de impostos |
@@ -445,8 +456,9 @@ Resposta
 | Status | Funcionalidade |
 |:------:|----------------|
 | ✅ | Endereço de entrega (snapshot do endereço utilizado na compra) |
+| ✅ | Cadastro de transportadoras (Carrier) |
+| ⏳ | Seleção da transportadora no pedido |
 | ⏳ | Código de rastreio |
-| ⏳ | Transportadora |
 | ⏳ | Prazo de entrega |
 
 ---
