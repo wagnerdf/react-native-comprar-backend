@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wagnerdf.comprar.dto.request.CarrierRequest;
 import com.wagnerdf.comprar.dto.response.CarrierResponse;
+import com.wagnerdf.comprar.dto.response.SuccessResponse;
 import com.wagnerdf.comprar.service.CarrierService;
 
 import jakarta.validation.Valid;
@@ -68,11 +68,13 @@ public class CarrierController {
 	}
 	
 	@DeleteMapping("/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void delete(
+	public ResponseEntity<SuccessResponse> delete(
 	        @PathVariable String id) {
 
 	    carrierService.delete(id);
+	    
+	    return ResponseEntity.ok(
+	            carrierService.delete(id));
 
 	}
 	

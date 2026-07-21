@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wagnerdf.comprar.dto.request.CarrierRequest;
 import com.wagnerdf.comprar.dto.response.CarrierResponse;
+import com.wagnerdf.comprar.dto.response.SuccessResponse;
 import com.wagnerdf.comprar.entity.Carrier;
 import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.exception.CarrierNotFoundException;
@@ -98,7 +99,7 @@ public class CarrierService {
 	}
 	
 	@Transactional
-	public void delete(String id) {
+	public SuccessResponse delete(String id) {
 
 	    Carrier carrier =
 	            findCarrier(id);
@@ -107,6 +108,10 @@ public class CarrierService {
 	    carrier.setUpdatedAt(LocalDateTime.now());
 
 	    carrierRepository.save(carrier);
+	    
+	    return SuccessResponse.builder()
+	            .message("Carrier successfully deleted.")
+	            .build();
 
 	}
 	
