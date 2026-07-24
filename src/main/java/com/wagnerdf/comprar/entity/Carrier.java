@@ -1,6 +1,7 @@
 package com.wagnerdf.comprar.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,5 +31,12 @@ public class Carrier {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+    
+    @OneToMany(
+            mappedBy = "carrier",
+            cascade = CascadeType.ALL,
+            orphanRemoval = false
+    )
+    private List<ShippingOption> shippingOptions;
 
 }
