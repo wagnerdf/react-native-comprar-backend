@@ -3,6 +3,8 @@ package com.wagnerdf.comprar.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,15 @@ public class ShippingOptionController {
 	    return ResponseEntity
 	            .status(HttpStatus.CREATED)
 	            .body(shippingOptionService.create(request));
+
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<ShippingOptionResponse> findById(
+	        @PathVariable String id) {
+
+	    return ResponseEntity.ok(
+	            shippingOptionService.findById(id));
 
 	}
 

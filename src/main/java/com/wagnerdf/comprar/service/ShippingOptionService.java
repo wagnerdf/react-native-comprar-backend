@@ -11,6 +11,7 @@ import com.wagnerdf.comprar.entity.Carrier;
 import com.wagnerdf.comprar.entity.ShippingOption;
 import com.wagnerdf.comprar.exception.BusinessException;
 import com.wagnerdf.comprar.exception.CarrierNotFoundException;
+import com.wagnerdf.comprar.exception.ShippingOptionNotFoundException;
 import com.wagnerdf.comprar.mapper.ShippingOptionMapper;
 import com.wagnerdf.comprar.repository.CarrierRepository;
 import com.wagnerdf.comprar.repository.ShippingOptionRepository;
@@ -29,7 +30,7 @@ public class ShippingOptionService {
      * FIND CARRIER
      * ==========================================================
      */
-    private Carrier findByIdOrThrow(String id) {
+    private Carrier findCarrierByIdOrThrow(String id) {
 
         Carrier carrier = carrierRepository.findById(id)
                 .orElseThrow(() ->
@@ -54,7 +55,7 @@ public class ShippingOptionService {
             ShippingOptionRequest request) {
 
         Carrier carrier =
-                findByIdOrThrow(request.carrierId());
+        		findCarrierByIdOrThrow(request.carrierId());
 
         String serviceName =
                 request.serviceName().trim();
@@ -80,6 +81,24 @@ public class ShippingOptionService {
                         .build();
 
         option = shippingOptionRepository.save(option);
+
+        return ShippingOptionMapper.toResponse(option);
+
+    }
+    
+    private ShippingOption findShippingOptionByIdOrThrow(String id) {
+
+        return shippingOptionRepository.findById(id)
+                .orElseThrow(() ->
+                        new ShippingOptionNotFoundException(id));
+
+    }
+    
+    @Transactional(readOnly = true)
+    public ShippingOptionResponse findById(String id) {
+
+    	ShippingOption option =
+    	        findShippingOptionByIdOrThrow(id);
 
         return ShippingOptionMapper.toResponse(option);
 
