@@ -27,8 +27,21 @@ public class ShippingOptionService {
 
     /**
      * ==========================================================
-     * FIND CARRIER
+     * FIND CARRIER BY ID
      * ==========================================================
+     *
+     * Localiza uma transportadora pelo ID.
+     *
+     * Regras:
+     *
+     * - A transportadora deve existir.
+     * - A transportadora deve estar ativa.
+     *
+     * Lança:
+     *
+     * - CarrierNotFoundException
+     * - BusinessException (quando estiver inativa)
+     *
      */
     private Carrier findCarrierByIdOrThrow(String id) {
 
@@ -86,6 +99,22 @@ public class ShippingOptionService {
 
     }
     
+    /**
+     * ==========================================================
+     * FIND SHIPPING OPTION BY ID
+     * ==========================================================
+     *
+     * Localiza uma opção de frete pelo ID.
+     *
+     * Regras:
+     *
+     * - A opção de frete deve existir.
+     *
+     * Lança:
+     *
+     * - ShippingOptionNotFoundException
+     *
+     */
     private ShippingOption findShippingOptionByIdOrThrow(String id) {
 
         return shippingOptionRepository.findById(id)
