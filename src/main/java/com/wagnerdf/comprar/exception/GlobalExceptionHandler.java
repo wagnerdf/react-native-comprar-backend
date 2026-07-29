@@ -499,6 +499,28 @@ public class GlobalExceptionHandler {
 
     }
     
+    /**
+     * ==========================================================
+     * SHIPPING OPTION NOT FOUND
+     * ==========================================================
+     *
+     * Trata exceções quando uma opção de frete não é encontrada.
+     *
+     * Retorno:
+     *
+     * HTTP 404 - NOT FOUND
+     *
+     * Exemplo:
+     *
+     * {
+     *   "timestamp": "...",
+     *   "status":404,
+     *   "error":"Not Found",
+     *   "message":"Shipping option not found: {id}",
+     *   "path":"/shipping-options/{id}"
+     * }
+     *
+     */
     @ExceptionHandler(ShippingOptionNotFoundException.class)
     public ResponseEntity<ApiError> handleShippingOptionNotFound(
             ShippingOptionNotFoundException ex,
