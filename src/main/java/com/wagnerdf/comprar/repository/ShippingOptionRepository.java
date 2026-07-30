@@ -16,5 +16,10 @@ public interface ShippingOptionRepository
     Optional<ShippingOption> findByCarrierIdAndServiceNameIgnoreCase(
             String carrierId,
             String serviceName);
+    
+    boolean existsByCarrierIdAndServiceNameIgnoreCaseAndIdNot(
+            String carrierId,
+            String serviceName,
+            String id);
 
 }

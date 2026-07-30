@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wagnerdf.comprar.dto.request.ShippingOptionRequest;
+import com.wagnerdf.comprar.dto.request.ShippingOptionUpdateRequest;
 import com.wagnerdf.comprar.dto.response.ShippingOptionListResponse;
 import com.wagnerdf.comprar.dto.response.ShippingOptionResponse;
 import com.wagnerdf.comprar.service.ShippingOptionService;
@@ -56,6 +58,21 @@ public class ShippingOptionController {
 
 	    return ResponseEntity.ok(
 	            shippingOptionService.findAll(pageable));
+
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<ShippingOptionResponse> update(
+
+	        @PathVariable
+	        String id,
+
+	        @Valid
+	        @RequestBody
+	        ShippingOptionUpdateRequest request) {
+
+	    return ResponseEntity.ok(
+	            shippingOptionService.update(id, request));
 
 	}
 

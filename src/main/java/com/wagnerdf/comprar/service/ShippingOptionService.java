@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wagnerdf.comprar.dto.request.ShippingOptionRequest;
+import com.wagnerdf.comprar.dto.request.ShippingOptionUpdateRequest;
 import com.wagnerdf.comprar.dto.response.ShippingOptionListResponse;
 import com.wagnerdf.comprar.dto.response.ShippingOptionResponse;
 import com.wagnerdf.comprar.entity.Carrier;
@@ -176,6 +177,52 @@ public class ShippingOptionService {
         return shippingOptionRepository
                 .findAll(pageable)
                 .map(ShippingOptionMapper::toListResponse);
+
+    }
+    
+    /**
+     * ==========================================================
+     * UPDATE SHIPPING OPTION
+     * ==========================================================
+     *
+     * Atualiza uma opção de frete.
+     *
+     * Regras:
+     *
+     * - A opção deve existir.
+     * - O nome do serviço é normalizado.
+     * - Não permite serviços duplicados na mesma transportadora.
+     * - Atualiza updatedAt.
+     *
+     */
+    @Transactional
+    public ShippingOptionResponse update(
+            String id,
+            ShippingOptionUpdateRequest request) {
+
+        ShippingOption option =
+                findShippingOptionByIdOrThrow(id);
+
+        String serviceName =
+                request.serviceName().trim();
+
+        if (shippingOptionRepository
+                .existsByCarrierIdAndServiceNameIgnoreCaseAndIdNot(
+                        option.getCarrier().getId(),
+                        serviceName,
+                        option.getId())) {
+
+            throw new BusinessException(
+                    "Shipping service already exists for this carrier.");
+        }
+
+        option.setServiceName(serviceName);
+        option.setPrice(request.price());
+        option.setEstimatedDays(request.estimatedDays());
+        option.setUpdatedAt(LocalDateTime.now());
+
+        return ShippingOptionMapper.toResponse(
+                shippingOptionRepository.save(option));
 
     }
 
