@@ -2,10 +2,13 @@ package com.wagnerdf.comprar.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wagnerdf.comprar.dto.request.ShippingOptionRequest;
+import com.wagnerdf.comprar.dto.response.ShippingOptionListResponse;
 import com.wagnerdf.comprar.dto.response.ShippingOptionResponse;
 import com.wagnerdf.comprar.entity.Carrier;
 import com.wagnerdf.comprar.entity.ShippingOption;
@@ -130,6 +133,16 @@ public class ShippingOptionService {
     	        findShippingOptionByIdOrThrow(id);
 
         return ShippingOptionMapper.toResponse(option);
+
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<ShippingOptionListResponse> findAll(
+            Pageable pageable) {
+
+        return shippingOptionRepository
+                .findAll(pageable)
+                .map(ShippingOptionMapper::toListResponse);
 
     }
 

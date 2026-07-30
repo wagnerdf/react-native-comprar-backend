@@ -1,5 +1,7 @@
 package com.wagnerdf.comprar.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wagnerdf.comprar.dto.request.ShippingOptionRequest;
+import com.wagnerdf.comprar.dto.response.ShippingOptionListResponse;
 import com.wagnerdf.comprar.dto.response.ShippingOptionResponse;
 import com.wagnerdf.comprar.service.ShippingOptionService;
 
@@ -44,6 +47,15 @@ public class ShippingOptionController {
 
 	    return ResponseEntity.ok(
 	            shippingOptionService.findById(id));
+
+	}
+	
+	@GetMapping
+	public ResponseEntity<Page<ShippingOptionListResponse>> findAll(
+	        Pageable pageable) {
+
+	    return ResponseEntity.ok(
+	            shippingOptionService.findAll(pageable));
 
 	}
 
