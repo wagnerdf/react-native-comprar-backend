@@ -136,6 +136,39 @@ public class ShippingOptionService {
 
     }
     
+    /**
+     * ==========================================================
+     * FIND ALL SHIPPING OPTIONS
+     * ==========================================================
+     *
+     * Retorna uma lista paginada das opções de frete.
+     *
+     * A paginação é realizada automaticamente pelo Spring através
+     * do objeto Pageable.
+     *
+     * Exemplos:
+     *
+     * GET /shipping-options
+     *
+     * GET /shipping-options?page=0&size=10
+     *
+     * GET /shipping-options?page=1&size=20
+     *
+     * Ordenação:
+     *
+     * GET /shipping-options?sort=serviceName,asc
+     *
+     * GET /shipping-options?sort=price,desc
+     *
+     * Também é possível combinar:
+     *
+     * GET /shipping-options?page=0&size=10&sort=price,asc
+     *
+     * Retorno:
+     *
+     * - Lista paginada de ShippingOptionListResponse.
+     *
+     */
     @Transactional(readOnly = true)
     public Page<ShippingOptionListResponse> findAll(
             Pageable pageable) {
