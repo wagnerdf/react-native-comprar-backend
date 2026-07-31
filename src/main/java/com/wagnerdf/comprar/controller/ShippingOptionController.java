@@ -34,6 +34,7 @@ public class ShippingOptionController {
 	private final ShippingOptionService shippingOptionService;
 	
 	@PostMapping
+	@PreAuthorize("hasAuthority('CREATE_SHIPPING_OPTION')")
 	public ResponseEntity<ShippingOptionResponse> create(
 
 	        @Valid
@@ -65,6 +66,7 @@ public class ShippingOptionController {
 	}
 	
 	@PutMapping("/{id}")
+	@PreAuthorize("hasAuthority('UPDATE_SHIPPING_OPTION')")
 	public ResponseEntity<ShippingOptionResponse> update(
 
 	        @PathVariable
