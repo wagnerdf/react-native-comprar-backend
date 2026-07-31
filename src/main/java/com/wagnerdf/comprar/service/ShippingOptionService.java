@@ -263,5 +263,31 @@ public class ShippingOptionService {
                 .build();
 
     }
+    
+    @Transactional
+    public ShippingOptionResponse reactivate(String id) {
+
+        ShippingOption option = findByIdOrThrow(id);
+
+        if (option.getActive()) {
+            throw new BusinessException(
+                    "Shipping option is already active.");
+        }
+
+        option.setActive(true);
+        option.setUpdatedAt(LocalDateTime.now());
+
+        return ShippingOptionMapper.toResponse(
+                shippingOptionRepository.save(option));
+
+    }
+    
+    private ShippingOption findByIdOrThrow(String id) {
+
+        return shippingOptionRepository.findById(id)
+                .orElseThrow(() ->
+                        new ShippingOptionNotFoundException(id));
+
+    }
 
 }
