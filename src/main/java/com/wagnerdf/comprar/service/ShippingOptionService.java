@@ -29,6 +29,8 @@ public class ShippingOptionService {
 
     private final ShippingOptionRepository shippingOptionRepository;
     private final CarrierRepository carrierRepository;
+    private final AuditService auditService;
+    private final AuthenticatedUserService authenticatedUserService;
 
     /**
      * ==========================================================
@@ -99,8 +101,16 @@ public class ShippingOptionService {
                         .build();
 
         option = shippingOptionRepository.save(option);
+        
+        ShippingOption saved =
+                shippingOptionRepository.save(option);
 
-        return ShippingOptionMapper.toResponse(option);
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "CREATE_SHIPPING_OPTION"
+        );
+
+        return ShippingOptionMapper.toResponse(saved);
 
     }
     
@@ -221,9 +231,15 @@ public class ShippingOptionService {
         option.setPrice(request.price());
         option.setEstimatedDays(request.estimatedDays());
         option.setUpdatedAt(LocalDateTime.now());
+        
+        ShippingOption saved = shippingOptionRepository.save(option);
 
-        return ShippingOptionMapper.toResponse(
-                shippingOptionRepository.save(option));
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "UPDATE_SHIPPING_OPTION"
+        );
+
+        return ShippingOptionMapper.toResponse(saved);
 
     }
     
@@ -257,7 +273,12 @@ public class ShippingOptionService {
         option.setUpdatedAt(LocalDateTime.now());
 
         shippingOptionRepository.save(option);
-        
+
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "DELETE_SHIPPING_OPTION"
+        );
+
         return SuccessResponse.builder()
                 .message("Shipping option deleted successfully.")
                 .build();
@@ -306,9 +327,16 @@ public class ShippingOptionService {
 
         option.setActive(true);
         option.setUpdatedAt(LocalDateTime.now());
+        
+        ShippingOption saved =
+                shippingOptionRepository.save(option);
 
-        return ShippingOptionMapper.toResponse(
-                shippingOptionRepository.save(option));
+        auditService.log(
+                authenticatedUserService.getCurrentUsername(),
+                "REACTIVATE_SHIPPING_OPTION"
+        );
+
+        return ShippingOptionMapper.toResponse(saved);
 
     }
     
