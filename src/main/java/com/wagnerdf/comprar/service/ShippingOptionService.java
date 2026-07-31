@@ -264,6 +264,36 @@ public class ShippingOptionService {
 
     }
     
+    /**
+     * ==========================================================
+     * REACTIVATE SHIPPING OPTION
+     * ==========================================================
+     *
+     * Reativa uma opção de frete previamente desativada.
+     *
+     * Regras:
+     *
+     * - A opção de frete deve existir.
+     * - Não permite reativar uma opção já ativa.
+     * - Atualiza o campo updatedAt.
+     *
+     * Fluxo:
+     *
+     * Localiza a opção de frete
+     *        ↓
+     * Valida se já está ativa
+     *        ↓
+     * Ativa a opção
+     *        ↓
+     * Atualiza updatedAt
+     *        ↓
+     * Salva no banco
+     *        ↓
+     * Retorna ShippingOptionResponse
+     *
+     * @param id Identificador da opção de frete.
+     * @return ShippingOptionResponse contendo os dados atualizados.
+     */
     @Transactional
     public ShippingOptionResponse reactivate(String id) {
 
