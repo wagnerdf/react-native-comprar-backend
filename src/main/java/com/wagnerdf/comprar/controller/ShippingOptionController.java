@@ -80,7 +80,7 @@ public class ShippingOptionController {
 	}
 	
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('SHIPPING_OPTION_DELETE')")
+	@PreAuthorize("hasAuthority('DELETE_SHIPPING_OPTION')")
 	public ResponseEntity<SuccessResponse> delete(
 	        @PathVariable String id) {
 

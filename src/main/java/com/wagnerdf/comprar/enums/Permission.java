@@ -48,4 +48,14 @@ public enum Permission {
     UPDATE_EMPLOYEE,
     DELETE_EMPLOYEE,
     REACTIVATE_EMPLOYEE,
+    
+	// =========================
+	// SHIPPING OPTION
+	// =========================
+	CREATE_SHIPPING_OPTION,
+	READ_SHIPPING_OPTION,
+	UPDATE_SHIPPING_OPTION,
+	DELETE_SHIPPING_OPTION,
+	REACTIVATE_SHIPPING_OPTION,
+    
 }

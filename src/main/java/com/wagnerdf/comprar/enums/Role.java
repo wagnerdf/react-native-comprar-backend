@@ -20,7 +20,9 @@ public enum Role {
 	        PermissionGroups.CATEGORY_FULL,
 	        PermissionGroups.PRODUCT_FULL,
 	        PermissionGroups.ORDER_FULL,
+	        PermissionGroups.SHIPPING_OPTION_FULL,
 	        PermissionGroups.EMPLOYEE_SELF
+	        
 	    )
 	),
 
@@ -31,7 +33,9 @@ public enum Role {
 	        PermissionGroups.CATEGORY_FULL,
 	        PermissionGroups.PRODUCT_FULL,
 	        PermissionGroups.ORDER_FULL,
+	        PermissionGroups.SHIPPING_OPTION_FULL,
 	        PermissionGroups.EMPLOYEE_FULL
+	        
 	    )
 	),
 	

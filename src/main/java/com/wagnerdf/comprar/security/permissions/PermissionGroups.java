@@ -91,6 +91,18 @@ public final class PermissionGroups {
 	         new PermissionGroup(Set.of(
 	                 Permission.UPDATE_USER
 	         ));
+	 
+	// =========================
+	// SHIPPING OPTION
+	// =========================
+	public static final PermissionGroup SHIPPING_OPTION_FULL =
+	        new PermissionGroup(Set.of(
+	                Permission.CREATE_SHIPPING_OPTION,
+	                Permission.READ_SHIPPING_OPTION,
+	                Permission.UPDATE_SHIPPING_OPTION,
+	                Permission.DELETE_SHIPPING_OPTION,
+	                Permission.REACTIVATE_SHIPPING_OPTION
+	        ));
 
     @SafeVarargs
     public static Set<Permission> merge(PermissionGroup... groups) {
