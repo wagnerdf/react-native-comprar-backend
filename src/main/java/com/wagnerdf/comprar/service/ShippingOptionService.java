@@ -318,7 +318,7 @@ public class ShippingOptionService {
     @Transactional
     public ShippingOptionResponse reactivate(String id) {
 
-        ShippingOption option = findByIdOrThrow(id);
+        ShippingOption option = findShippingOptionByIdOrThrow(id);
 
         if (option.getActive()) {
             throw new BusinessException(
@@ -339,13 +339,4 @@ public class ShippingOptionService {
         return ShippingOptionMapper.toResponse(saved);
 
     }
-    
-    private ShippingOption findByIdOrThrow(String id) {
-
-        return shippingOptionRepository.findById(id)
-                .orElseThrow(() ->
-                        new ShippingOptionNotFoundException(id));
-
-    }
-
 }
