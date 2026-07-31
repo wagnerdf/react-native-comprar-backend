@@ -4,7 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,7 @@ import com.wagnerdf.comprar.dto.request.ShippingOptionRequest;
 import com.wagnerdf.comprar.dto.request.ShippingOptionUpdateRequest;
 import com.wagnerdf.comprar.dto.response.ShippingOptionListResponse;
 import com.wagnerdf.comprar.dto.response.ShippingOptionResponse;
+import com.wagnerdf.comprar.dto.response.SuccessResponse;
 import com.wagnerdf.comprar.service.ShippingOptionService;
 
 import jakarta.validation.Valid;
@@ -73,6 +76,16 @@ public class ShippingOptionController {
 
 	    return ResponseEntity.ok(
 	            shippingOptionService.update(id, request));
+
+	}
+	
+	@DeleteMapping("/{id}")
+	@PreAuthorize("hasAuthority('SHIPPING_OPTION_DELETE')")
+	public ResponseEntity<SuccessResponse> delete(
+	        @PathVariable String id) {
+
+	    return ResponseEntity.ok(
+	            shippingOptionService.delete(id));
 
 	}
 

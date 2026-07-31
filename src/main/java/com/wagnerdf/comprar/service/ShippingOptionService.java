@@ -11,6 +11,7 @@ import com.wagnerdf.comprar.dto.request.ShippingOptionRequest;
 import com.wagnerdf.comprar.dto.request.ShippingOptionUpdateRequest;
 import com.wagnerdf.comprar.dto.response.ShippingOptionListResponse;
 import com.wagnerdf.comprar.dto.response.ShippingOptionResponse;
+import com.wagnerdf.comprar.dto.response.SuccessResponse;
 import com.wagnerdf.comprar.entity.Carrier;
 import com.wagnerdf.comprar.entity.ShippingOption;
 import com.wagnerdf.comprar.exception.BusinessException;
@@ -223,6 +224,43 @@ public class ShippingOptionService {
 
         return ShippingOptionMapper.toResponse(
                 shippingOptionRepository.save(option));
+
+    }
+    
+    /**
+     * ==========================================================
+     * SOFT DELETE SHIPPING OPTION
+     * ==========================================================
+     *
+     * Realiza a exclusão lógica de uma opção de frete.
+     *
+     * Regras:
+     *
+     * - A opção deve existir.
+     * - Caso já esteja inativa, nenhuma alteração é realizada.
+     * - Atualiza o campo active para false.
+     * - Atualiza o campo updatedAt.
+     *
+     */
+    @Transactional
+    public SuccessResponse delete(String id) {
+
+        ShippingOption option =
+                findShippingOptionByIdOrThrow(id);
+
+        if (!option.getActive()) {
+            throw new BusinessException(
+                    "Shipping option is already inactive.");
+        }
+
+        option.setActive(false);
+        option.setUpdatedAt(LocalDateTime.now());
+
+        shippingOptionRepository.save(option);
+        
+        return SuccessResponse.builder()
+                .message("Shipping option deleted successfully.")
+                .build();
 
     }
 
