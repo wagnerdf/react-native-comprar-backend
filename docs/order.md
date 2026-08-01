@@ -4,7 +4,7 @@
 
 Responsável pelo gerenciamento completo dos pedidos realizados pelos clientes da plataforma.
 
-O módulo controla todo o ciclo de vida de um pedido, desde sua criação até sua conclusão ou cancelamento, integrando produtos, estoque, pagamentos e auditoria.
+O módulo controla todo o ciclo de vida de um pedido, desde sua criação até sua conclusão ou cancelamento, integrando produtos, estoque, transportadoras, serviços de entrega, pagamentos e auditoria.
 
 ---
 # Segurança
@@ -116,6 +116,9 @@ CANCELLED
 - ✅ Valida o endereço de entrega informado.
 - ✅ O endereço deve pertencer ao usuário autenticado.
 - ✅ Cria um snapshot do endereço de entrega no momento da compra.
+- ⏳ Selecionará futuramente uma transportadora (Carrier).
+- ⏳ Selecionará futuramente um serviço de entrega (ShippingOption).
+- ⏳ Calculará automaticamente o frete.
 - ✅ O número do pedido é composto por:
   - Prefixo ORD
   - Ano corrente
@@ -314,8 +317,19 @@ Responsável por:
 Responsável por:
 
 - manter o cadastro das transportadoras;
-- disponibilizar transportadoras ativas para o cálculo do frete;
-- servir como base para os serviços de entrega (ShippingOption).
+- disponibilizar apenas transportadoras ativas;
+- servir como base para os serviços de entrega.
+
+---
+
+## ShippingOption
+
+Responsável por:
+
+- disponibilizar os serviços de entrega de cada transportadora;
+- informar preço base do frete;
+- informar prazo estimado de entrega;
+- permitir seleção do serviço durante a criação do pedido.
 
 ---
 
@@ -361,6 +375,13 @@ POST /orders
 Validação do usuário autenticado
         ↓
 Validação do endereço de entrega
+		↓
+(Futuro)
+Seleciona Carrier
+        ↓
+Seleciona ShippingOption
+        ↓
+Calcula Frete
         ↓
 Validação dos produtos
         ↓
@@ -402,6 +423,22 @@ Resposta
 ```
 ---
 
+### Fluxo futuro do cálculo de frete
+
+```text
+Order
+     ↓
+DeliveryAddress
+     ↓
+Carrier
+     ↓
+ShippingOption
+     ↓
+Freight Calculator
+```
+
+---
+
 # Roadmap do Módulo
 
 ## Funcionalidades
@@ -431,9 +468,8 @@ Resposta
 | Status | Funcionalidade |
 |:------:|----------------|
 | ✅ | Número sequencial do pedido (ORD + Ano + UF + Aleatório + Sequência) |
-| ⏳ | Frete (infraestrutura iniciada com Carrier) |
+| ⏳ | Frete (infraestrutura iniciada com Carrier e ShippingOption) |
 | ⏳ | Cupons de desconto |
-| ⏳ | Frete |
 | ⏳ | Cálculo de impostos |
 | ⏳ | Observações do pedido |
 
@@ -457,7 +493,10 @@ Resposta
 |:------:|----------------|
 | ✅ | Endereço de entrega (snapshot do endereço utilizado na compra) |
 | ✅ | Cadastro de transportadoras (Carrier) |
-| ⏳ | Seleção da transportadora no pedido |
+| ✅ | Cadastro de serviços de entrega (ShippingOption) |
+| ⏳ | Seleção da transportadora |
+| ⏳ | Seleção do serviço de entrega |
+| ⏳ | Cálculo automático do frete |
 | ⏳ | Código de rastreio |
 | ⏳ | Prazo de entrega |
 
