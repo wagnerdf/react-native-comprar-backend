@@ -6,6 +6,8 @@ Responsável pelo gerenciamento das transportadoras utilizadas pela plataforma.
 
 O módulo centraliza o cadastro das empresas responsáveis pelo transporte dos pedidos e servirá como base para o cálculo de frete, geração de rastreamento e integração com APIs de logística.
 
+Cada transportadora poderá possuir um ou mais serviços de entrega (ShippingOption), permitindo diferentes modalidades de frete como PAC, SEDEX, Expresso, Econômico, entre outras.
+
 ---
 
 # Segurança
@@ -34,6 +36,10 @@ Campos
 - active
 - createdAt
 - updatedAt
+
+Relacionamentos
+
+- 1:N ShippingOption
 
 ---
 
@@ -87,6 +93,29 @@ Ao excluir:
 
 - Altera active = true.
 - Atualiza updatedAt.
+
+---
+
+# Integração com ShippingOption
+
+Cada transportadora pode possuir uma ou mais opções de envio.
+
+Exemplos:
+
+Transportadora: Correios
+
+- PAC
+- SEDEX
+
+Transportadora: Jadlog
+
+- Package
+- Expresso
+
+Transportadora: Loggi
+
+- Econômico
+- Express
 
 ---
 
@@ -166,6 +195,12 @@ Normalização (trim)
 Verificação de duplicidade
         ↓
 Persistência
+
+Carrier
+      ↓
+ShippingOption
+      ↓
+Order
 ```
 
 ---
@@ -205,7 +240,7 @@ O mapeamento entre Entity e DTO é realizado pelo **CarrierMapper**.
 
 | Status | Funcionalidade |
 |:------:|----------------|
-| ⏳ | ShippingOption |
+| ✅ | ShippingOption |
 | ⏳ | Cálculo de frete |
 | ⏳ | APIs de transportadoras |
 | ⏳ | Código de rastreio |
@@ -218,6 +253,6 @@ O mapeamento entre Entity e DTO é realizado pelo **CarrierMapper**.
 
 Este módulo é utilizado por:
 
-- ShippingOption
+- ShippingOption (CRUD concluído)
 - Order
-- Freight Calculator
+- Freight Calculator (futuro)
