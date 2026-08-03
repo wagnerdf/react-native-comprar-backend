@@ -32,24 +32,21 @@ public class ShippingOptionService {
     private final AuditService auditService;
     private final AuthenticatedUserService authenticatedUserService;
 
-    /**
-     * ==========================================================
-     * FIND CARRIER BY ID
-     * ==========================================================
-     *
-     * Localiza uma transportadora pelo ID.
-     *
-     * Regras:
-     *
-     * - A transportadora deve existir.
-     * - A transportadora deve estar ativa.
-     *
-     * Lança:
-     *
-     * - CarrierNotFoundException
-     * - BusinessException (quando estiver inativa)
-     *
-     */
+	// ================================================================================
+	// ----------------Busca de Carrier----------------
+	// Localiza uma transportadora válida pelo ID.
+    //
+    // Regras:
+    //
+    // - A transportadora deve existir.
+    // - A transportadora deve estar ativa.
+    //
+    // Lança:
+    //
+    // - CarrierNotFoundException
+    // - BusinessException (quando estiver inativa)
+    //
+	// ================================================================================
     private Carrier findCarrierByIdOrThrow(String id) {
 
         Carrier carrier = carrierRepository.findById(id)
@@ -65,11 +62,19 @@ public class ShippingOptionService {
 
     }
 
-    /**
-     * ==========================================================
-     * CREATE SHIPPING OPTION
-     * ==========================================================
-     */
+	 // ================================================================================
+	 // ----------------Cadastro de Opção de Frete----------------
+	 // 🎯 Regras
+	 // ✅ Carrier deve existir.
+	 // ✅ Carrier deve estar ativo.
+	 // ✅ Nome do serviço obrigatório.
+	 // ✅ Remove espaços no início e fim do nome.
+	 // ✅ Não permite duplicidade de serviço para a mesma transportadora.
+	 // ✅ Opção de frete nasce ativa.
+	 // ✅ createdAt recebe data atual.
+	 // ✅ updatedAt recebe data atual.
+	 // ✅ Registrar auditoria (CREATE_SHIPPING_OPTION).
+	 // ================================================================================
     @Transactional
     public ShippingOptionResponse create(
             ShippingOptionRequest request) {
@@ -114,22 +119,21 @@ public class ShippingOptionService {
 
     }
     
-    /**
-     * ==========================================================
-     * FIND SHIPPING OPTION BY ID
-     * ==========================================================
-     *
-     * Localiza uma opção de frete pelo ID.
-     *
-     * Regras:
-     *
-     * - A opção de frete deve existir.
-     *
-     * Lança:
-     *
-     * - ShippingOptionNotFoundException
-     *
-     */
+	// ================================================================================
+	// ----------------Busca de ShippingOption----------------
+	// Localiza uma opção de frete pelo ID.
+    //
+    // Localiza uma opção de frete pelo ID.
+    //
+    // Regras:
+    //
+    // - A opção de frete deve existir.
+    //
+    // Lança:
+    //
+    // - ShippingOptionNotFoundException
+    //
+	// ================================================================================
     private ShippingOption findShippingOptionByIdOrThrow(String id) {
 
         return shippingOptionRepository.findById(id)
@@ -138,6 +142,12 @@ public class ShippingOptionService {
 
     }
     
+	 // ================================================================================
+	 // ----------------Consulta por ID----------------
+	 // 🎯 Regras
+	 // ✅ Localiza a opção de frete pelo ID.
+	 // ✅ Lança ShippingOptionNotFoundException quando inexistente.
+	 // ================================================================================
     @Transactional(readOnly = true)
     public ShippingOptionResponse findById(String id) {
 
@@ -148,39 +158,42 @@ public class ShippingOptionService {
 
     }
     
-    /**
-     * ==========================================================
-     * FIND ALL SHIPPING OPTIONS
-     * ==========================================================
-     *
-     * Retorna uma lista paginada das opções de frete.
-     *
-     * A paginação é realizada automaticamente pelo Spring através
-     * do objeto Pageable.
-     *
-     * Exemplos:
-     *
-     * GET /shipping-options
-     *
-     * GET /shipping-options?page=0&size=10
-     *
-     * GET /shipping-options?page=1&size=20
-     *
-     * Ordenação:
-     *
-     * GET /shipping-options?sort=serviceName,asc
-     *
-     * GET /shipping-options?sort=price,desc
-     *
-     * Também é possível combinar:
-     *
-     * GET /shipping-options?page=0&size=10&sort=price,asc
-     *
-     * Retorno:
-     *
-     * - Lista paginada de ShippingOptionListResponse.
-     *
-     */
+    
+	 // ================================================================================
+	 // ----------------Listagem Paginada----------------
+	 // 🎯 Regras
+	 // ✅ Retorna todas as opções de frete.
+	 // ✅ Suporta paginação.
+	 // ✅ Suporta ordenação.
+     //
+     // Retorna uma lista paginada das opções de frete.
+     //
+     // A paginação é realizada automaticamente pelo Spring através
+     // do objeto Pageable.
+     //
+     // Exemplos:
+     //
+     // GET /shipping-options
+     //
+     // GET /shipping-options?page=0&size=10
+     //
+     // GET /shipping-options?page=1&size=20
+     //
+     // Ordenação:
+     //
+     // GET /shipping-options?sort=serviceName,asc
+     //
+     // GET /shipping-options?sort=price,desc
+     //
+     // Também é possível combinar:
+     //
+     // GET /shipping-options?page=0&size=10&sort=price,asc
+     //
+     // Retorno:
+     //
+     // - Lista paginada de ShippingOptionListResponse.
+     //
+     // ================================================================================
     @Transactional(readOnly = true)
     public Page<ShippingOptionListResponse> findAll(
             Pageable pageable) {
@@ -191,21 +204,17 @@ public class ShippingOptionService {
 
     }
     
-    /**
-     * ==========================================================
-     * UPDATE SHIPPING OPTION
-     * ==========================================================
-     *
-     * Atualiza uma opção de frete.
-     *
-     * Regras:
-     *
-     * - A opção deve existir.
-     * - O nome do serviço é normalizado.
-     * - Não permite serviços duplicados na mesma transportadora.
-     * - Atualiza updatedAt.
-     *
-     */
+	 // ================================================================================
+	 // ----------------Atualização----------------
+	 // 🎯 Regras
+	 // ✅ Opção de frete deve existir.
+	 // ✅ Não permite duplicidade de serviço para a mesma transportadora.
+	 // ✅ Atualiza serviceName.
+	 // ✅ Atualiza price.
+	 // ✅ Atualiza estimatedDays.
+	 // ✅ updatedAt recebe data atual.
+	 // ✅ Registrar auditoria (UPDATE_SHIPPING_OPTION).
+	 // ================================================================================
     @Transactional
     public ShippingOptionResponse update(
             String id,
@@ -243,21 +252,15 @@ public class ShippingOptionService {
 
     }
     
-    /**
-     * ==========================================================
-     * SOFT DELETE SHIPPING OPTION
-     * ==========================================================
-     *
-     * Realiza a exclusão lógica de uma opção de frete.
-     *
-     * Regras:
-     *
-     * - A opção deve existir.
-     * - Caso já esteja inativa, nenhuma alteração é realizada.
-     * - Atualiza o campo active para false.
-     * - Atualiza o campo updatedAt.
-     *
-     */
+	 // ================================================================================
+	 // ----------------Soft Delete----------------
+	 // 🎯 Regras
+	 // ✅ Opção de frete deve existir.
+	 // ✅ Não permite excluir registro já inativo.
+	 // ✅ active = false.
+	 // ✅ updatedAt recebe data atual.
+	 // ✅ Registrar auditoria (DELETE_SHIPPING_OPTION).
+	 // ================================================================================
     @Transactional
     public SuccessResponse delete(String id) {
 
@@ -285,36 +288,32 @@ public class ShippingOptionService {
 
     }
     
-    /**
-     * ==========================================================
-     * REACTIVATE SHIPPING OPTION
-     * ==========================================================
-     *
-     * Reativa uma opção de frete previamente desativada.
-     *
-     * Regras:
-     *
-     * - A opção de frete deve existir.
-     * - Não permite reativar uma opção já ativa.
-     * - Atualiza o campo updatedAt.
-     *
-     * Fluxo:
-     *
-     * Localiza a opção de frete
-     *        ↓
-     * Valida se já está ativa
-     *        ↓
-     * Ativa a opção
-     *        ↓
-     * Atualiza updatedAt
-     *        ↓
-     * Salva no banco
-     *        ↓
-     * Retorna ShippingOptionResponse
-     *
-     * @param id Identificador da opção de frete.
-     * @return ShippingOptionResponse contendo os dados atualizados.
-     */
+	// ================================================================================
+	// ----------------Reativação----------------
+	// 🎯 Regras
+	// ✅ Opção de frete deve existir.
+	// ✅ Não permite reativar registro já ativo.
+	// ✅ active = true.
+	// ✅ updatedAt recebe data atual.
+	// ✅ Registrar auditoria (REACTIVATE_SHIPPING_OPTION).
+    //
+    // Fluxo:
+    //
+    // Localiza a opção de frete
+    //        ↓
+    // Valida se já está ativa
+    //        ↓
+    // Ativa a opção
+    //        ↓
+    // Atualiza updatedAt
+    //        ↓
+    // Salva no banco
+    //        ↓
+    // Retorna ShippingOptionResponse
+    //
+    // @param id Identificador da opção de frete.
+    // @return ShippingOptionResponse contendo os dados atualizados.
+	 // ================================================================================
     @Transactional
     public ShippingOptionResponse reactivate(String id) {
 
