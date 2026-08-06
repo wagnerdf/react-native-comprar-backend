@@ -8,6 +8,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 public record ShippingOptionRequest(
 
+		@NotBlank(message = "Carrier is required.")
         String carrierId,
 
         @NotBlank

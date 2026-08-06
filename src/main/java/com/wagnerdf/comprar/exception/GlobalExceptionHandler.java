@@ -200,18 +200,16 @@ public class GlobalExceptionHandler {
      * HTTP 400 - Bad Request
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiError> handleInvalidEnum(
+    public ResponseEntity<ApiError> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex,
             HttpServletRequest request
     ) {
 
-    	String validValues = getEnumValues(Gender.class);
-    	
         ApiError error = ApiError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Invalid Request")
-                .message("Gender inválido. Valores aceitos: " + validValues)
+                .message("Malformed request body or invalid field value.")
                 .path(request.getRequestURI())
                 .build();
 
