@@ -23,13 +23,19 @@ O gerenciamento das opções de frete pertence ao Backoffice da aplicação.
 | Desativar | ✅ | ✅ | ❌ |
 | Reativar | ✅ | ✅ | ❌ |
 
+- CREATE_SHIPPING_OPTION
+- READ_SHIPPING_OPTION
+- UPDATE_SHIPPING_OPTION
+- DELETE_SHIPPING_OPTION
+- REACTIVATE_SHIPPING_OPTION
+
 ---
 
 # Entidade
 
 ## ShippingOption
 
-Campos previstos
+Campos
 
 - id
 - carrier
@@ -52,6 +58,10 @@ Campos previstos
 - ✅ Remove espaços em branco no início e fim do nome do serviço.
 - ✅ O serviço é criado ativo por padrão.
 - ✅ Registra auditoria (`CREATE_SHIPPING_OPTION`).
+- ✅ carrierId obrigatório.
+- ✅ serviceName obrigatório.
+- ✅ price obrigatório.
+- ✅ estimatedDays obrigatório.
 
 ---
 
@@ -69,6 +79,9 @@ Campos previstos
 - ✅ Não permite nome duplicado para a mesma transportadora.
 - ✅ Atualiza automaticamente o campo `updatedAt`.
 - ✅ Registra auditoria (`UPDATE_SHIPPING_OPTION`).
+- ✅ Permite alterar nome do serviço.
+- ✅ Permite alterar preço.
+- ✅ Permite alterar prazo estimado.
 
 ---
 
@@ -93,6 +106,21 @@ Ao reativar:
 - altera `active` para `true`;
 - atualiza `updatedAt`;
 - registra auditoria (`REACTIVATE_SHIPPING_OPTION`).
+
+---
+
+---
+
+# Exceptions
+
+O módulo utiliza exceções específicas:
+
+| Exception | HTTP |
+|----------|------|
+| ShippingOptionNotFoundException | 404 |
+| CarrierNotFoundException | 404 |
+| BusinessException | 400 |
+| ValidationException | 400 |
 
 ---
 
@@ -174,6 +202,16 @@ Operações registradas
 | ✅ | DELETE_SHIPPING_OPTION |
 | ✅ | REACTIVATE_SHIPPING_OPTION |
 
+Todas as operações acima são persistidas na tabela:
+
+audit_logs
+
+Campos registrados:
+
+- username
+- action
+- timestamp
+
 ---
 
 # Integrações
@@ -233,7 +271,13 @@ Os mapeamentos entre Entity e DTO são realizados pelo **ShippingOptionMapper**.
 ```text
 POST /shipping-options
         ↓
+Usuário autenticado
+        ↓
 Valida Carrier
+        ↓
+Verifica Carrier ativo
+        ↓
+Normaliza serviceName
         ↓
 Valida duplicidade
         ↓
@@ -241,7 +285,7 @@ Cria ShippingOption
         ↓
 Persistência
         ↓
-Auditoria
+CREATE_SHIPPING_OPTION
 ```
 
 ---
@@ -316,6 +360,19 @@ Auditoria
 
 ---
 
+# Controle de Acesso
+
+```text
+Request
+   ↓
+JWT Authentication
+   ↓
+Permission Validation
+   ↓
+Controller
+   ↓
+Service
+
 # Roadmap do Módulo
 
 ## Funcionalidades
@@ -328,6 +385,9 @@ Auditoria
 | ✅ | Atualização |
 | ✅ | Soft Delete |
 | ✅ | Reativação |
+| ✅ | Controle de permissões |
+| ✅ | Auditoria |
+| ✅ | Validações de entrada |
 
 ---
 
@@ -353,3 +413,17 @@ Auditoria
 | ⏳ | Loggi |
 | ⏳ | Melhor Envio |
 | ⏳ | Frenet |
+
+# Status Atual
+
+🟢 Módulo concluído.
+
+Implementado:
+
+✅ CRUD completo  
+✅ Segurança por permissões  
+✅ Soft Delete  
+✅ Reativação  
+✅ Auditoria  
+✅ Validações  
+✅ Documentação técnica
