@@ -26,12 +26,23 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Controller responsável pelo gerenciamento das opções de envio
- * disponibilizadas por cada transportadora.
+ * ================================================================================
+ * Controller - Shipping Option
  *
- * <p>Este módulo permite cadastrar, consultar, atualizar,
- * desativar e reativar serviços de entrega utilizados
- * futuramente no cálculo de frete dos pedidos.</p>
+ * Responsável pelo gerenciamento das opções de envio vinculadas às transportadoras.
+ *
+ * Permite:
+ *
+ * ✅ Cadastro de opções de frete.
+ * ✅ Consulta de opções disponíveis.
+ * ✅ Atualização de serviços.
+ * ✅ Soft Delete.
+ * ✅ Reativação.
+ *
+ * As opções cadastradas serão utilizadas futuramente
+ * no cálculo de frete dos pedidos.
+ *
+ * ================================================================================
  */
 @RestController
 @RequestMapping("/shipping-options")
@@ -40,12 +51,22 @@ public class ShippingOptionController {
 	
 	private final ShippingOptionService shippingOptionService;
 	
-	/**
-	 * Cadastra uma nova opção de envio para uma transportadora.
-	 *
-	 * @param request dados da opção de envio
-	 * @return opção de envio criada
-	 */
+	// =============================================================================
+	// ----------------Cadastro de Opção de Frete----------------
+	//
+	// 🎯 Regras
+	// ✅ Apenas usuários com CREATE_SHIPPING_OPTION.
+	// ✅ Carrier deve existir.
+	// ✅ Carrier deve estar ativo.
+	// ✅ Nome do serviço obrigatório.
+	// ✅ Remove espaços no início e fim do nome.
+	// ✅ Não permite duplicidade para a mesma transportadora.
+	// ✅ Opção nasce ativa.
+	// ✅ createdAt recebe data atual.
+	// ✅ updatedAt recebe data atual.
+	// ✅ Registrar auditoria (CREATE_SHIPPING_OPTION).
+	//
+	// =============================================================================
 	@PostMapping
 	@PreAuthorize("hasAuthority('CREATE_SHIPPING_OPTION')")
 	public ResponseEntity<ShippingOptionResponse> create(
@@ -60,13 +81,17 @@ public class ShippingOptionController {
 
 	}
 	
-	/**
-	 * Busca uma opção de envio pelo identificador.
-	 *
-	 * @param id identificador da opção de envio
-	 * @return opção de envio encontrada
-	 */
+	// =============================================================================
+	// ----------------Consulta de Opção de Frete por ID----------------
+	//
+	// 🎯 Regras
+	// ✅ Busca opção pelo identificador informado.
+	// ✅ Retorna apenas registros existentes.
+	// ✅ Caso não exista lança ShippingOptionNotFoundException.
+	//
+	// =============================================================================
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('READ_SHIPPING_OPTION')")
 	public ResponseEntity<ShippingOptionResponse> findById(
 	        @PathVariable String id) {
 
@@ -75,13 +100,18 @@ public class ShippingOptionController {
 
 	}
 	
-	/**
-	 * Lista as opções de envio de forma paginada.
-	 *
-	 * @param pageable informações de paginação e ordenação
-	 * @return página contendo as opções de envio
-	 */
+	// =============================================================================
+	// ----------------Listagem de Opções de Frete----------------
+	//
+	// 🎯 Regras
+	// ✅ Retorna opções cadastradas.
+	// ✅ Utiliza paginação.
+	// ✅ Permite ordenação via Pageable.
+	// ✅ Usado futuramente pelo cálculo de frete.
+	//
+	// =============================================================================
 	@GetMapping
+	@PreAuthorize("hasAuthority('READ_SHIPPING_OPTION')")
 	public ResponseEntity<Page<ShippingOptionListResponse>> findAll(
 	        Pageable pageable) {
 
@@ -90,13 +120,21 @@ public class ShippingOptionController {
 
 	}
 	
-	/**
-	 * Atualiza uma opção de envio existente.
-	 *
-	 * @param id identificador da opção de envio
-	 * @param request novos dados da opção de envio
-	 * @return opção de envio atualizada
-	 */
+	// =============================================================================
+	// ----------------Atualização de Opção de Frete----------------
+	//
+	// 🎯 Regras
+	// ✅ Apenas usuários com UPDATE_SHIPPING_OPTION.
+	// ✅ Opção deve existir.
+	// ✅ Permite alterar nome do serviço.
+	// ✅ Permite alterar preço.
+	// ✅ Permite alterar prazo estimado.
+	// ✅ Remove espaços extras do nome.
+	// ✅ Não permite duplicidade para mesma transportadora.
+	// ✅ Atualiza updatedAt.
+	// ✅ Registrar auditoria (UPDATE_SHIPPING_OPTION).
+	//
+	// =============================================================================
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('UPDATE_SHIPPING_OPTION')")
 	public ResponseEntity<ShippingOptionResponse> update(
@@ -113,12 +151,19 @@ public class ShippingOptionController {
 
 	}
 	
-	/**
-	 * Realiza a exclusão lógica (Soft Delete) de uma opção de envio.
-	 *
-	 * @param id identificador da opção de envio
-	 * @return mensagem de sucesso
-	 */
+	// =============================================================================
+	// ----------------Exclusão de Opção de Frete----------------
+	//
+	// 🎯 Regras
+	// ✅ Apenas usuários com DELETE_SHIPPING_OPTION.
+	// ✅ Não remove fisicamente o registro.
+	// ✅ Executa Soft Delete.
+	// ✅ Altera active para false.
+	// ✅ Atualiza updatedAt.
+	// ✅ Não permite excluir registro já inativo.
+	// ✅ Registrar auditoria (DELETE_SHIPPING_OPTION).
+	//
+	// =============================================================================
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAuthority('DELETE_SHIPPING_OPTION')")
 	public ResponseEntity<SuccessResponse> delete(
@@ -129,12 +174,19 @@ public class ShippingOptionController {
 
 	}
 	
-	/**
-	 * Reativa uma opção de envio previamente desativada.
-	 *
-	 * @param id identificador da opção de envio
-	 * @return opção de envio reativada
-	 */
+	// =============================================================================
+	// ----------------Reativação de Opção de Frete----------------
+	//
+	// 🎯 Regras
+	// ✅ Apenas usuários com REACTIVATE_SHIPPING_OPTION.
+	// ✅ Opção deve existir.
+	// ✅ Deve estar desativada.
+	// ✅ Altera active para true.
+	// ✅ Atualiza updatedAt.
+	// ✅ Permite reutilização no cálculo de frete.
+	// ✅ Registrar auditoria (REACTIVATE_SHIPPING_OPTION).
+	//
+	// =============================================================================
 	@PatchMapping("/{id}/reactivate")
 	@PreAuthorize("hasAuthority('REACTIVATE_SHIPPING_OPTION')")
 	public ShippingOptionResponse reactivate(
