@@ -24,10 +24,14 @@ public class FreightController {
     // ----------------Cálculo de Frete----------------
     // 🎯 Regras
     // ✅ Recebe a ShippingOption escolhida.
-    // ✅ Valida a ShippingOption.
+    // ✅ Recebe o CEP de destino.
+    // ✅ Valida o ID da ShippingOption.
+    // ✅ Valida o formato do CEP.
+    // ✅ Valida se a ShippingOption existe.
     // ✅ Valida se a ShippingOption está ativa.
     // ✅ Valida se a Carrier está ativa.
     // ✅ Retorna preço e prazo estimado.
+    // ⚠️ O CEP ainda não influencia o cálculo nesta primeira versão.
     // ================================================================================
 
     @PostMapping("/calculate")

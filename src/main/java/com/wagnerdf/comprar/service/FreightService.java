@@ -23,18 +23,24 @@ public class FreightService {
     // ✅ ShippingOption deve existir.
     // ✅ ShippingOption deve estar ativa.
     // ✅ Carrier deve estar ativo.
+    // ✅ Destination ZIP code deve ser válido.
     // ✅ Retorna o preço cadastrado na ShippingOption.
     // ✅ Retorna o prazo estimado cadastrado na ShippingOption.
+    // ⚠️ O CEP ainda não participa do cálculo nesta primeira versão.
     // ================================================================================
 
     public FreightCalculationResponse calculate(
             FreightCalculationRequest request) {
+    	
+    	String shippingOptionId =
+                 request.shippingOptionId().trim();
 
-        ShippingOption option = shippingOptionRepository
-                .findById(request.shippingOptionId())
-                .orElseThrow(() ->
+        ShippingOption option = 
+        		shippingOptionRepository
+                	.findById(shippingOptionId)
+                	.orElseThrow(() ->
                         new ShippingOptionNotFoundException(
-                                request.shippingOptionId()));
+                                shippingOptionId));
 
         if (!option.getActive()) {
             throw new BusinessException(
