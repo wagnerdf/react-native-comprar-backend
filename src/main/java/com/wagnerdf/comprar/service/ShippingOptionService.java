@@ -84,6 +84,10 @@ public class ShippingOptionService {
 
         String serviceName =
                 request.serviceName().trim();
+        
+        String originZipCode =
+                request.originZipCode()
+                        .replaceAll("\\D", "");
 
         shippingOptionRepository
                 .findByCarrierIdAndServiceNameIgnoreCase(
@@ -101,6 +105,7 @@ public class ShippingOptionService {
                         .price(request.price())
                         .estimatedDays(request.estimatedDays())
                         .active(true)
+                        .originZipCode(originZipCode)
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
                         .build();
@@ -240,6 +245,10 @@ public class ShippingOptionService {
         option.setPrice(request.price());
         option.setEstimatedDays(request.estimatedDays());
         option.setUpdatedAt(LocalDateTime.now());
+        option.setOriginZipCode(
+                request.originZipCode()
+                        .replaceAll("\\D", "")
+        );
         
         ShippingOption saved = shippingOptionRepository.save(option);
 
