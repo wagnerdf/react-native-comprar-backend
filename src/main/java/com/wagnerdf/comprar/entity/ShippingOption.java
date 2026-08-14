@@ -41,5 +41,8 @@ public class ShippingOption {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+    
+    @Column(nullable = false,  length = 8)
+    private String originZipCode;
 
 }
